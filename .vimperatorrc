@@ -1,0 +1,9 @@
+" Ctrl-a
+inoremap <C-a> <C-Home><C-S-End>"
+
+" default search/suggest engine: google
+set defsearch=google
+set suggestengines=google
+
+" don't focus any "input" elements automatically when open pages.
+set focuscontent
