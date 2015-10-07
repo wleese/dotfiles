@@ -1,5 +1,5 @@
 " Ctrl-a
-inoremap <C-a> <C-Home><C-S-End>"
+inoremap <C-a> <C-Home><C-S-End>
 
 " default search/suggest engine: google
 set defsearch=google
