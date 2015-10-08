@@ -7,3 +7,9 @@ set suggestengines=google
 
 " don't focus any "input" elements automatically when open pages.
 set focuscontent
+
+ignorekeys add gmail.com
+ignorekeys add mail.google.com
+ignorekeys add confluence.tools.bol.com
+ignorekeys add jira.tools.bol.com
+ignorekeys add hipchat.com

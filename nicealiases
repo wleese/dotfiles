@@ -10,6 +10,7 @@ alias tf='tail -f ';
 alias nstat='netstat --inet --inet6 -pln | grep --color ';
 alias netstat='netstat --inet --inet6 -pln';
 alias pt='puppet agent -t';
+alias spt='sleep 2m; puppet agent -t';
 alias get='curl -s -XGET ';
 alias post='curl -s -XPOST ';
 alias c='cat';
