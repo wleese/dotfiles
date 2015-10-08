@@ -13,3 +13,4 @@ ignorekeys add mail.google.com
 ignorekeys add confluence.tools.bol.com
 ignorekeys add jira.tools.bol.com
 ignorekeys add hipchat.com
+ignorekeys add docs.google.com
