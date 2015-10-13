@@ -1,4 +1,4 @@
-nnoremap <F11> :set nonumber!<CR>:GitGutterDisable<CR>
+nnoremap <F11> :set nonumber!<CR>:GitGutterDisable<CR>:set norelativenumber<CR>
 map <C-n> :NERDTreeToggle<CR>
 
 map <Leader>r :VimuxPromptCommand<CR>
