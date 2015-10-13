@@ -1,9 +1,5 @@
+" easy toggle to allow nastly mouse based copy
 nnoremap <F11> :set nonumber!<CR>:GitGutterDisable<CR>:set norelativenumber<CR>
-map <C-n> :NERDTreeToggle<CR>
-
-map <Leader>r :VimuxPromptCommand<CR>
-map <Leader>a :VimuxRunLastCommand<CR>
-let VimuxUseNearest = 0
 
 " no need for shift
 nnoremap    ;     :
@@ -11,54 +7,100 @@ nnoremap    ;     :
 " s for seek
 nmap s <Plug>(easymotion-s2)
 
-" q no more
-"map q :
-
+" more colors
 set t_Co=256
 
+" Vundle
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
-
-" Vundle
 Bundle 'gmarik/vundle'
-Bundle 'Raimondi/delimitMate'
+
+" vertical indent line
 Bundle 'Yggdroot/indentLine'
-Bundle 'scrooloose/nerdtree'
+
+" color nested [({
 Bundle 'luochen1990/rainbow'
-Bundle 'ervandew/supertab'
-Bundle 'scrooloose/syntastic'
-Bundle 'godlygeek/tabular'
-Bundle 'tomtom/tlib_vim'
-Bundle 'SirVer/ultisnips'
-Bundle 'ardagnir/united-front'
-Bundle 'Shougo/unite.vim'
-Bundle 'bling/vim-airline'
-Bundle 'tpope/vim-commentary'
-Bundle 'easymotion/vim-easymotion'
-Bundle 'xolox/vim-easytags'
-Bundle 'tpope/vim-fugitive'
+
+" git
 Bundle 'airblade/vim-gitgutter'
-Bundle 'michaeljsmith/vim-indent-object'
-Bundle 'xolox/vim-misc'
-Bundle 'Shougo/vimproc.vim'
-Bundle 'rodjek/vim-puppet'
+
+" automatic closing of quotes, parenthesis, brackets, etc
+Bundle 'Raimondi/delimitMate'
+
+" filetree browser
+Bundle 'scrooloose/nerdtree'
+map <C-n> :NERDTreeToggle<CR>
+
+" all insert mode completions with tab
+Bundle 'ervandew/supertab'
+
+" syntax highlighting
+Bundle 'scrooloose/syntastic'
+
+" text alignment
+Bundle 'godlygeek/tabular'
+
+" 
+Bundle 'tomtom/tlib_vim'
+
+" common snippets for multiple languages
+Bundle 'SirVer/ultisnips'
 Bundle 'honza/vim-snippets'
+
+" share the registers of any and/or all vim instances
+Bundle 'ardagnir/united-front'
+
+" file find and more
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/vimproc.vim'
+nnoremap <Leader>f :Unite -start-insert file_rec/async<CR>
+
+
+" nice statusbar
+Bundle 'bling/vim-airline'
+
+" easy comment out. e.g. gcap
+Bundle 'tpope/vim-commentary'
+
+" quicker motion
+Bundle 'easymotion/vim-easymotion'
+
+" make vim tags easier
+Bundle 'xolox/vim-misc'
+Bundle 'xolox/vim-easytags'
+
+" lots of git commands
+Bundle 'tpope/vim-fugitive'
+
+" ii is indentation text object
+Bundle 'michaeljsmith/vim-indent-object'
+
+" everything puppet
+Bundle 'rodjek/vim-puppet'
+
+" change surroundings with s object
 Bundle 'tpope/vim-surround'
+
+" line object
 Bundle 'kana/vim-textobj-line'
 Bundle 'kana/vim-textobj-user'
+
+" completation based on history
+Bundle 'Valloric/YouCompleteMe'
+
+" integration with tmux
 Bundle 'christoomey/vim-tmux-navigator'
 Bundle 'benmills/vimux'
-Bundle 'Valloric/YouCompleteMe'
+map <Leader>r :VimuxPromptCommand<CR>
+map <Leader>a :VimuxRunLastCommand<CR>
+let VimuxUseNearest = 0
 
 filetype plugin indent on
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
-
-" unite plugin
-nnoremap <Leader>f :Unite -start-insert file_rec/async<CR>
 
 " fix common typos
 :command WQ wq
