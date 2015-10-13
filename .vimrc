@@ -51,7 +51,6 @@ Bundle 'christoomey/vim-tmux-navigator'
 Bundle 'benmills/vimux'
 Bundle 'Valloric/YouCompleteMe'
 
-filetype on
 filetype plugin indent on
 
 if !exists('g:airline_symbols')
@@ -95,7 +94,7 @@ set secure
 set shiftwidth=2
 set shortmess=aoOtT     " Abbreviate the status messages
 set showcmd             " Show command I'm typing
-set showmatch
+set showmatch           " show matching ({[
 set sidescrolloff=5 " don't scroll any closer to left/right
 set smartcase
 set smartindent
@@ -103,10 +102,13 @@ set smarttab
 set softtabstop=2
 set tabstop=2
 set timeoutlen=500
+
 set wildchar=<TAB>      " Character to start command line completion
 set wildmenu            " Enhanced command line completion mode
 set wildmode=longest:full,full
+
 set undofile
+set undodir=~/.vim/undo
 
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
@@ -120,7 +122,7 @@ let g:rainbow_active = 1
 let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
 let g:ycm_complete_in_comments = 1 " Completion in comments
 let g:ycm_complete_in_strings = 1 " Completion in string
-let g:airline_powerline_fonts = 1
+let g:airline_powerline_fonts = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#eclim#enabled = 1
 let g:airline#extensions#branch#enabled = 1
