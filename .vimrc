@@ -32,8 +32,9 @@ Plugin 'Raimondi/delimitMate'
 Plugin 'scrooloose/nerdtree'
 map <C-n> :NERDTreeToggle<CR>
 
-" all insert mode completions with tab
-Plugin 'ervandew/supertab'
+" obsolete due to YCM
+" " all insert mode completions with tab
+" Plugin 'ervandew/supertab'
 
 " syntax highlighting
 Plugin 'scrooloose/syntastic'
@@ -215,3 +216,23 @@ inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
 " Show any trailing whitespace
 set list
 set listchars=tab:>-,trail:-
+
+" file is large from 5mb
+let g:LargeFile = 1024 * 1024 * 5
+augroup LargeFile 
+ autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+augroup END
+
+function LargeFile()
+ " no syntax highlighting etc
+ set eventignore+=FileType
+ " save memory when other file is viewed
+ setlocal bufhidden=unload
+ " is read-only (write with :w new_filename)
+ setlocal buftype=nowrite
+ " no undo possible
+ setlocal undolevels=-1
+ " display message
+ autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed (see .vimrc for details)."
+endfunction
+
