@@ -170,3 +170,6 @@ export CDPATH=~:~/git/puppet-vagrant:~/git/puppet-vagrant/modules:~/git
 function tnew { tmux new-session -As `basename $0`  }
 
 source ~/.zshrc-company
+
+#git status filename binding
+eval "$(scmpuff init -s)"

@@ -27,20 +27,8 @@ display=Display,Display,Switch Display
 
 [khotkeys]
 _k_friendly_name=KDE Daemon
-{05882546-ea16-4952-a11b-202e2cd7a710}=Print,none,PrintScreen
-{92ad8d4f-b983-401c-a178-73d7f4a4c592}=Ctrl+Alt+L,none,lock
+{3411885d-3a96-484f-86cd-90eb5b0b74bb}=Print,none,PrintScreen
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
-
-[klipper]
-_k_friendly_name=Klipper
-clear-history=none,none,Clear Clipboard History
-clipboard_action=none,Ctrl+Alt+X,Enable Clipboard Actions
-cycleNextAction=none,none,Next History Item
-cyclePrevAction=none,none,Previous History Item
-edit_clipboard=none,none,Edit Contents...
-repeat_action=none,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
-show-barcode=none,none,Show Barcode...
-show-on-mouse-pos=none,none,Open Klipper at Mouse Position
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -128,7 +116,7 @@ Walk Through Desktops=none,none,Walk Through Desktops
 Walk Through Desktops (Reverse)=none,none,Walk Through Desktops (Reverse)
 Walk Through Window Tabs=none,none,Walk Through Window Tabs
 Walk Through Window Tabs (Reverse)=none,none,Walk Through Window Tabs (Reverse)
-Walk Through Windows=Alt+Tab,none,Walk Through Windows
+Walk Through Windows=Alt+Tab\tCtrl+Space,none,Walk Through Windows
 Walk Through Windows (Reverse)=Alt+Shift+Backtab,none,Walk Through Windows (Reverse)
 Walk Through Windows Alternative=none,none,Walk Through Windows Alternative
 Walk Through Windows Alternative (Reverse)=none,none,Walk Through Windows Alternative (Reverse)

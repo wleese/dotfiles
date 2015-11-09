@@ -34,7 +34,7 @@ map <C-n> :NERDTreeToggle<CR>
 
 " obsolete due to YCM
 " " all insert mode completions with tab
-" Plugin 'ervandew/supertab'
+Plugin 'ervandew/supertab'
 
 " syntax highlighting
 Plugin 'scrooloose/syntastic'
