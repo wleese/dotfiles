@@ -10,94 +10,88 @@ nmap s <Plug>(easymotion-s2)
 " more colors
 set t_Co=256
 
-" Vundle
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#begin()
-Plugin 'gmarik/vundle'
-
+call plug#begin('~/.vim/plugged')
 " vertical indent line
-Plugin 'Yggdroot/indentLine'
+Plug 'Yggdroot/indentLine'
 
 " color nested [({
-Plugin 'luochen1990/rainbow'
+Plug 'luochen1990/rainbow'
 
 " git
-Plugin 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 
 " automatic closing of quotes, parenthesis, brackets, etc
-Plugin 'Raimondi/delimitMate'
+Plug 'Raimondi/delimitMate'
 
 " filetree browser
-Plugin 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 map <C-n> :NERDTreeToggle<CR>
 
 " obsolete due to YCM
 " " all insert mode completions with tab
-Plugin 'ervandew/supertab'
+Plug 'ervandew/supertab'
 
 " syntax highlighting
-Plugin 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 
 " text alignment
-Plugin 'godlygeek/tabular'
+Plug 'godlygeek/tabular'
 
 " 
-Plugin 'tomtom/tlib_vim'
+Plug 'tomtom/tlib_vim'
 
 " common snippets for multiple languages
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 " share the registers of any and/or all vim instances
-Plugin 'ardagnir/united-front'
+Plug 'ardagnir/united-front'
 
 " file find and more
-Plugin 'Shougo/unite.vim'
-Plugin 'Shougo/vimproc.vim'
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 nnoremap <Leader>f :Unite -start-insert file_rec/async<CR>
 
 " nice statusbar
-Plugin 'bling/vim-airline'
+Plug 'bling/vim-airline'
 
 " easy comment out. e.g. gcap
-Plugin 'tpope/vim-commentary'
+Plug 'tpope/vim-commentary'
 
 " quicker motion
-Plugin 'easymotion/vim-easymotion'
+Plug 'easymotion/vim-easymotion'
 
 " make vim tags easier
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
 
 " lots of git commands
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 
 " ii is indentation text object
-Plugin 'michaeljsmith/vim-indent-object'
+Plug 'michaeljsmith/vim-indent-object'
 
 " everything puppet
-Plugin 'rodjek/vim-puppet'
+Plug 'rodjek/vim-puppet', { 'for': 'pp' }
 
 " change surroundings with s object
-Plugin 'tpope/vim-surround'
+Plug 'tpope/vim-surround'
 
 " line object
-Plugin 'kana/vim-textobj-line'
-Plugin 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-line'
+Plug 'kana/vim-textobj-user'
 
 " completation based on history
-Plugin 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " integration with tmux
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'benmills/vimux'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'benmills/vimux'
 map <Leader>r :VimuxPromptCommand<CR>
 map <Leader>a :VimuxRunLastCommand<CR>
 let VimuxUseNearest = 0
 
-call vundle#end()
-filetype plugin indent on
+call plug#end()
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -235,4 +229,3 @@ function LargeFile()
  " display message
  autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed (see .vimrc for details)."
 endfunction
-

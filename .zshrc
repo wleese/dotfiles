@@ -66,19 +66,22 @@ export GIT_EDITOR=vim
 export VISUAL=vim
 export EDITOR=vim
 
-alias gcp='git commit -a; git push --recurse-submodules=check'
 alias gp='git pull; git submodule sync; git submodule update --init'
 alias glgg='git log -p -m'
 alias glg='git log -p'
-alias gnb='git checkout -b '
-alias gpr='hub pull-request'
 alias gc='git checkout '
 alias gbm='git checkout master'
+alias gbd='git checkout develop'
 alias gm='git merge '
 alias ga='git add '
+alias gai='git add -i'
+alias gam='git --amend '
 alias gb='git branch -va'
-alias gs='git status'
+alias gr="git remote -v "
+alias gd="git diff "
+alias gs='scmpuff_status' # scmpuff
 alias v='vim --servername me'
+alias vi='vim --servername me'
 alias vim='vim --servername me'
 
 function cssh () {
@@ -104,34 +107,13 @@ alias sshconfig="~/bin/sshconfig-create.sh > ~/.ssh/config"
 alias ..='cd ..'
 
 alias rg='grep -Ri'
-alias gr="git remote -v "
 alias ff="find | grep "
 alias sl="slock"
 alias psg="ps axf | grep "
 alias resetkde='for i in plasmashell kwin_x11; do killall ${i}; sleep 1s; (nohup ${i} &) ; done'
 
-function gfd () {
-  git flow feature finish $1 && git commit --amend
-}
-
-function gbd () { 
-  git push origin :$1 
-}
-
 function gcm () { 
   git commit -m "$1"
-}
-
-function gca () { 
-  git commit --amend -m "$1"
-}
-
-function gbr () {
-  BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  git rebase -i master
-  git branch -m $BRANCH "${BRANCH}_ready"
-  git push origin "${BRANCH}_ready"
-  git push origin ":${BRANCH}"
 }
 
 function lsv() {
@@ -172,4 +154,4 @@ function tnew { tmux new-session -As `basename $0`  }
 source ~/.zshrc-company
 
 #git status filename binding
-eval "$(scmpuff init -s)"
+eval "$(scmpuff init -s --aliases=false)"
