@@ -20,6 +20,6 @@ alias rg='grep -Ri --color';
 alias dl='docker ps -q -l';
 alias tcr='service tc_instance restart';
 alias tct='service tc_instance threaddump';
-alias lses='for i in \$(pgrep -f es.path.home -u elasticsearch,elastic,root); do echo \$i; ps -p \$i -o command=| grep -o -e "Des.path.conf=/etc/elasticsearch/[a-z]*[0-9]*" | cut -d/ -f 4; netstat -npt|grep \$i|grep -o \"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9]*\"; lsof -p \$i | grep -E \"\.log\$\"; echo; done';
+alias lses='for pid in \$(pgrep -f es.path.home -u elasticsearch,elastic,root); do instance=\$(ps -p \$pid -o command=| grep -o -e "Des.path.conf=/etc/elasticsearch/[a-z]*[0-9]*" | cut -d/ -f 4); interface=\$(netstat -npt|grep \$pid|grep -o \"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9]*\" | grep 9200); logs=\$(lsof -p \$pid | grep -E \"\.log\$\"); echo; export \$instance=\$interface; echo \"\$instance (\$pid)\"; echo \"curl -s -XGET \$interface\"; echo \$logs; done';
 . /etc/bashrc;
 export PS1='\u@\h \w# ';
