@@ -1,16 +1,37 @@
 " Ctrl-a
-inoremap <C-a> <C-Home><C-S-End>
+"inoremap <C-a> <C-Home><C-S-End>
+:inoremap <C-a> <Insert><C-a><Insert>
+
+" link to letters not numbers
+":set hintchars=hjklasdfgyuiopqwertnmzxcvb
+
+" better scrolling
+noremap j 5j
+noremap k 10k
 
 " default search/suggest engine: google
 set defsearch=google
-set suggestengines=google
+"set suggestengines=google
+
 
 " don't focus any "input" elements automatically when open pages.
-set focuscontent
+"set focuscontent
 
 ignorekeys add gmail.com
 ignorekeys add mail.google.com
-ignorekeys add confluence.tools.bol.com
-ignorekeys add jira.tools.bol.com
-ignorekeys add hipchat.com
+ignorekeys add bolcom.hipchat.com
 ignorekeys add docs.google.com
+
+" don't touch some common shortcuts
+
+" Normal Mode Mappings
+nnoremap <C-f> /
+nnoremap <C-w> :tabclose<CR>
+nnoremap <C-c> <C-v><C-c>
+nnoremap <C-v> <C-v><C-v>
+nnoremap <C-x> <C-v><C-x>
+
+" Insert Mode Mappings
+inoremap <C-c> <C-v><C-c>
+inoremap <C-v> <C-v><C-v>
+inoremap <C-x> <C-v><C-x>

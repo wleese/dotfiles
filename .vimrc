@@ -1,34 +1,38 @@
 " easy toggle to allow nastly mouse based copy
 nnoremap <F11> :GitGutterDisable<CR>:set norelativenumber!<CR>
 
+" disable highlighted last search
+nnoremap <F3> :set hlsearch!<CR>
+
 " no need for shift
 nnoremap ; :
-
-" s for seek
-nmap s <Plug>(easymotion-s2)
 
 " more colors
 set t_Co=256
 
 call plug#begin('~/.vim/plugged')
+
 " vertical indent line
-Plug 'Yggdroot/indentLine'
+"Plug 'Yggdroot/indentLine'
 
 " color nested [({
 Plug 'luochen1990/rainbow'
 
+" syntax based closing statements
+Plug 'tpope/vim-endwise'
+
+" syntax based closing statements
+Plug 'rstacruz/vim-closer'
+
 " git
 Plug 'airblade/vim-gitgutter'
 
-" automatic closing of quotes, parenthesis, brackets, etc
-Plug 'Raimondi/delimitMate'
+" filebrowser
+Plug 'tpope/vim-vinegar'
+" q to exit
+autocmd FileType netrw nnoremap q :bd<CR>
 
-" filetree browser
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-map <C-n> :NERDTreeToggle<CR>
-
-" obsolete due to YCM
-" " all insert mode completions with tab
+" all insert mode completions with tab
 Plug 'ervandew/supertab'
 
 " syntax highlighting
@@ -41,16 +45,23 @@ Plug 'godlygeek/tabular'
 Plug 'tomtom/tlib_vim'
 
 " common snippets for multiple languages
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
 
 " share the registers of any and/or all vim instances
-Plug 'ardagnir/united-front'
+"Plug 'ardagnir/united-front'
 
 " file find and more
 Plug 'Shougo/unite.vim'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 nnoremap <Leader>f :Unite -start-insert file_rec/async<CR>
+nnoremap <Leader>g :Unite grep:.<CR>
+" apt-get install silversearcher-ag
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --hidden'
+  let g:unite_source_grep_recursive_opt = ''
+endif
 
 " nice statusbar
 Plug 'bling/vim-airline'
@@ -59,11 +70,11 @@ Plug 'bling/vim-airline'
 Plug 'tpope/vim-commentary'
 
 " quicker motion
-Plug 'easymotion/vim-easymotion'
+"Plug 'easymotion/vim-easymotion'
 
 " make vim tags easier
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
+"Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-easytags'
 
 " lots of git commands
 Plug 'tpope/vim-fugitive'
@@ -72,7 +83,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'michaeljsmith/vim-indent-object'
 
 " everything puppet
-Plug 'rodjek/vim-puppet', { 'for': 'pp' }
+" Plug 'rodjek/vim-puppet', { 'for': 'pp' }
 
 " change surroundings with s object
 Plug 'tpope/vim-surround'
@@ -82,7 +93,15 @@ Plug 'kana/vim-textobj-line'
 Plug 'kana/vim-textobj-user'
 
 " completation based on history
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py', 'on': [] }
+" augroup load_us_ycm
+"   autocmd!
+"   autocmd InsertEnter * call plug#load('YouCompleteMe')
+"                      \| call youcompleteme#Enable() | autocmd! load_us_ycm
+" augroup END
+
+" be smart about pasting into vim
+Plug 'ConradIrwin/vim-bracketed-paste'
 
 " integration with tmux
 Plug 'christoomey/vim-tmux-navigator'
@@ -105,6 +124,7 @@ endif
 
 syntax on
 set autoindent
+" let g:indentLine_noConcealCursor="" " concealing quotes is bad
 set backspace=indent,eol,start " Set for maximum backspace smartness"
 set cmdheight=1         " Less Hit Return messages
 set cursorline
@@ -116,7 +136,6 @@ set fileencodings=utf-8,ucs-bom,cp1251
 set fileencoding=utf-8
 set fileformats=unix,dos,mac
 set fileformat=unix
-set gdefault
 set hlsearch
 set ignorecase
 set incsearch
@@ -147,16 +166,16 @@ set wildmode=longest:full,full
 set undofile
 set undodir=~/.vim/undo
 
-let g:syntastic_check_on_open=1
-let g:syntastic_enable_signs=1
+" let g:syntastic_check_on_open=1
+" let g:syntastic_enable_signs=1
 
-let g:delimitMate_expand_cr = 2
-let g:delimitMate_expand_space = 1
-let g:delimitMate_expand_inside_quotes = 1
-let g:delimitMate_balance_matchpairs = 1
-let g:delimitMate_jump_expansion = 1
+" let g:delimitMate_expand_cr = 2
+" let g:delimitMate_expand_space = 1
+" let g:delimitMate_expand_inside_quotes = 1
+" let g:delimitMate_balance_matchpairs = 1
+" let g:delimitMate_jump_expansion = 1
 let g:rainbow_active = 1
-let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
+" let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
 let g:ycm_complete_in_comments = 1 " Completion in comments
 let g:ycm_complete_in_strings = 1 " Completion in string
 let g:airline_powerline_fonts = 0
@@ -172,40 +191,40 @@ let g:airline#extensions#hunks#hunk_symbols = ['+', '~', '-']
 let g:airline#extensions#ctrlp#color_template = 'normal'
 let g:airline#extensions#ctrlp#show_adjacent_modes = 1
 
-let g:UltiSnipsExpandTrigger       ="<c-tab>"
-let g:UltiSnipsJumpForwardTrigger  = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+" let g:UltiSnipsExpandTrigger       ="<c-tab>"
+" let g:UltiSnipsJumpForwardTrigger  = "<tab>"
+" let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
 " Enable tabbing through list of results
-function! g:UltiSnips_Complete()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res == 0
-        if pumvisible()
-            return "\<C-n>"
-        else
-            call UltiSnips#JumpForwards()
-            if g:ulti_jump_forwards_res == 0
-               return "\<TAB>"
-            endif
-        endif
-    endif
-    return ""
-endfunction
+" function! g:UltiSnips_Complete()
+"     call UltiSnips#ExpandSnippet()
+"     if g:ulti_expand_res == 0
+"         if pumvisible()
+"             return "\<C-n>"
+"         else
+"             call UltiSnips#JumpForwards()
+"             if g:ulti_jump_forwards_res == 0
+"                return "\<TAB>"
+"             endif
+"         endif
+"     endif
+"     return ""
+" endfunction
 
-au InsertEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+" au InsertEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
 
 " Expand snippet or return
-let g:ulti_expand_res = 0
-function! Ulti_ExpandOrEnter()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res
-        return ''
-    else
-        return "\<return>"
-endfunction
+" let g:ulti_expand_res = 0
+" function! Ulti_ExpandOrEnter()
+"     call UltiSnips#ExpandSnippet()
+"     if g:ulti_expand_res
+"         return ''
+"     else
+"         return "\<return>"
+" endfunction
 
 " Set <space> as primary trigger
-inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
+" inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
 
 " Show any trailing whitespace
 set list
@@ -229,3 +248,14 @@ function LargeFile()
  " display message
  autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed (see .vimrc for details)."
 endfunction
+
+" somehow filetype = conf for pp files. fixing
+augroup filetypedetect
+  au BufNewFile,BufRead *.pp setl ft=puppet
+augroup END
+
+" puppet-lint.rc isnt respected by syntastic
+let g:syntastic_puppet_puppetlint_args="no-80chars-check"
+
+" switch buffers with F5
+:nnoremap <Leader>b :buffers<CR>:buffer<Space>
