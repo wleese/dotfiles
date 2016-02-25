@@ -3,7 +3,11 @@
 :inoremap <C-a> <Insert><C-a><Insert>
 
 " link to letters not numbers
-":set hintchars=hjklasdfgyuiopqwertnmzxcvb
+set hintchars=hjklasdfgyuiopqwertnmzxcvb
+
+" Items which are completed at the :open prompts.
+" just location bar entries
+set complete=l
 
 " better scrolling
 noremap j 5j
@@ -11,8 +15,6 @@ noremap k 10k
 
 " default search/suggest engine: google
 set defsearch=google
-"set suggestengines=google
-
 
 " don't focus any "input" elements automatically when open pages.
 "set focuscontent
