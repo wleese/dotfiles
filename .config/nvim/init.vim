@@ -33,14 +33,14 @@ Plug 'airblade/vim-gitgutter'
 
 " filebrowser
 Plug 'tpope/vim-vinegar'
-" q to exit
+
+" q to exit netrw
 autocmd FileType netrw nnoremap q :bd<CR>
 
 " all insert mode completions with tab
 Plug 'ervandew/supertab'
 
 " syntax highlighting
-"Plug 'scrooloose/syntastic'
 Plug 'benekastah/neomake'
 autocmd! BufWritePost * Neomake
 
@@ -57,6 +57,7 @@ nnoremap <Leader>f :Unite -start-insert file_rec/async<CR>
 nnoremap <Leader>g :Unite grep:.<CR>
 nnoremap <Leader>b :Unite buffer<CR>
 nnoremap <Leader>r :Unite register<CR>
+
 " apt-get install silversearcher-ag
 if executable('ag')
   let g:unite_source_grep_command = 'ag'
@@ -89,13 +90,7 @@ Plug 'tpope/vim-surround'
 Plug 'kana/vim-textobj-line'
 Plug 'kana/vim-textobj-user'
 
-" completation based on history
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py', 'on': [] }
-" augroup load_us_ycm
-"   autocmd!
-"   autocmd InsertEnter * call plug#load('YouCompleteMe')
-"                      \| call youcompleteme#Enable() | autocmd! load_us_ycm
-" augroup END
+" various completion stuff
 Plug 'Shougo/deoplete.nvim'
 
 " " be smart about pasting into vim
@@ -103,8 +98,21 @@ Plug 'Shougo/deoplete.nvim'
 
 call plug#end()
 
+" Window split settings
+highlight TermCursor ctermfg=red guifg=red
+set splitbelow
+set splitright
+
 " easy terminal escaping
 tnoremap <Esc> <C-\><C-n>
+
+" Window navigation function
+" Make ctrl-h/j/k/l move between windows and auto-insert in terminals
+:au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -163,18 +171,7 @@ set wildmode=longest:full,full
 set undofile
 set undodir=~/.vim/undo
 
-" let g:syntastic_check_on_open=1
-" let g:syntastic_enable_signs=1
-
-" let g:delimitMate_expand_cr = 2
-" let g:delimitMate_expand_space = 1
-" let g:delimitMate_expand_inside_quotes = 1
-" let g:delimitMate_balance_matchpairs = 1
-" let g:delimitMate_jump_expansion = 1
 let g:rainbow_active = 1
-" let g:ycm_seed_identifiers_with_syntax = 1 " Completion for programming language's keyword
-" let g:ycm_complete_in_comments = 1 " Completion in comments
-" let g:ycm_complete_in_strings = 1 " Completion in string
 let g:airline_powerline_fonts = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#eclim#enabled = 1
@@ -187,41 +184,6 @@ let g:airline#extensions#hunks#enabled = 1
 let g:airline#extensions#hunks#hunk_symbols = ['+', '~', '-']
 let g:airline#extensions#ctrlp#color_template = 'normal'
 let g:airline#extensions#ctrlp#show_adjacent_modes = 1
-
-" let g:UltiSnipsExpandTrigger       ="<c-tab>"
-" let g:UltiSnipsJumpForwardTrigger  = "<tab>"
-" let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-
-" Enable tabbing through list of results
-" function! g:UltiSnips_Complete()
-"     call UltiSnips#ExpandSnippet()
-"     if g:ulti_expand_res == 0
-"         if pumvisible()
-"             return "\<C-n>"
-"         else
-"             call UltiSnips#JumpForwards()
-"             if g:ulti_jump_forwards_res == 0
-"                return "\<TAB>"
-"             endif
-"         endif
-"     endif
-"     return ""
-" endfunction
-
-" au InsertEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-
-" Expand snippet or return
-" let g:ulti_expand_res = 0
-" function! Ulti_ExpandOrEnter()
-"     call UltiSnips#ExpandSnippet()
-"     if g:ulti_expand_res
-"         return ''
-"     else
-"         return "\<return>"
-" endfunction
-
-" Set <space> as primary trigger
-" inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
 
 " Show any trailing whitespace
 set list
@@ -254,10 +216,7 @@ endfunction
 " puppet-lint.rc isnt respected by syntastic
 let g:syntastic_puppet_puppetlint_args="no-80chars-check"
 
-" switch buffers with F5
-":nnoremap <Leader>b :buffers<CR>:buffer<Space>
-
-
+" only show the cursorline when theres focus
 augroup highlight_follows_focus
     autocmd!
     autocmd WinEnter * set cursorline
