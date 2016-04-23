@@ -4,10 +4,6 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
-" workaround for bug where buffer switch closes term:// buffers
-autocmd TermOpen * set bufhidden=hide
-
-
 " easy toggle to allow nastly mouse based copy
 nnoremap <F11> :GitGutterDisable<CR>:set norelativenumber!<CR>
 
@@ -98,17 +94,57 @@ Plug 'Shougo/deoplete.nvim'
 
 call plug#end()
 
+
 " Window split settings
 highlight TermCursor ctermfg=red guifg=red
 set splitbelow
 set splitright
 
+" workaround for bug where buffer switch closes term:// buffers
+"autocmd TermOpen * set bufhidden=hide
+
+" term in a split, also reuse existing terms
+nnoremap <Leader>t :call TermEnter()<CR>
+
+tnoremap <F12> <C-\><C-n> 
+set switchbuf+=useopen
+function! TermEnter()
+  let bufcount = bufnr("$")
+  let currbufnr = 1
+  let nummatches = 0
+  let firstmatchingbufnr = 0
+  while currbufnr <= bufcount
+    if(bufexists(currbufnr))
+      let currbufname = bufname(currbufnr)
+      if(match(currbufname, "term://") > -1)
+        echo currbufnr . ": ". bufname(currbufnr)
+        let nummatches += 1
+        let firstmatchingbufnr = currbufnr
+        break
+      endif
+    endif
+    let currbufnr = currbufnr + 1
+  endwhile
+  if(nummatches >= 1)
+    execute ":sbuffer ". firstmatchingbufnr
+    startinsert
+  else
+    execute "split"
+    execute "terminal"
+    execute "resize 15"
+  endif
+endfunction
 " easy terminal escaping
 tnoremap <Esc> <C-\><C-n>
 
+" trying to get the terminal to behave
+" tnoremap <C-Right> <Esc><C-Right>
+" tnoremap <C-Left>  <Esc><C-Left>
+
+:au TermOpen * :let  g:terminal_scrollback_buffer_size=100000
+
 " Window navigation function
-" Make ctrl-h/j/k/l move between windows and auto-insert in terminals
-:au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+":au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
@@ -125,25 +161,26 @@ endif
 :command Q q
 
 syntax on
-set autoindent
-set clipboard+=unnamedplus
+
+" " neovim enabled
+" set autoindent
+" set backspace=indent,eol,start " Set for maximum backspace smartness"
+" set encoding=utf-8
+" set hlsearch
+" set incsearch
+" set laststatus=2        " Always show status bar
+" set wildmenu            " Enhanced command line completion mode
+" set listchars=tab:>-,trail:-
+
+" set clipboard+=unnamedplus
 " let g:indentLine_noConcealCursor="" " concealing quotes is bad
-set backspace=indent,eol,start " Set for maximum backspace smartness"
 set cmdheight=1         " Less Hit Return messages
 set cursorline
-set display+=uhex " Show unprintables as <xx>
-set encoding=utf-8
+"set display+=uhex " Show unprintables as <xx>
 set expandtab
-set fileencodings=utf-8
-set fileencodings=utf-8,ucs-bom,cp1251
-set fileencoding=utf-8
-set fileformats=unix,dos,mac
-set fileformat=unix
-set hlsearch
 set ignorecase
-set incsearch
-set laststatus=2        " Always show status bar
 set linespace=1 " add some line space for easy reading
+set list
 set noshowmode
 set relativenumber
 set pastetoggle=<F10>
@@ -161,11 +198,11 @@ set softtabstop=2
 set tabstop=2
 set timeoutlen=500
 
+
 " Disable mouse click to go to position
 set mouse-=a
 
 set wildchar=<TAB>      " Character to start command line completion
-set wildmenu            " Enhanced command line completion mode
 set wildmode=longest:full,full
 
 set undofile
@@ -184,10 +221,6 @@ let g:airline#extensions#hunks#enabled = 1
 let g:airline#extensions#hunks#hunk_symbols = ['+', '~', '-']
 let g:airline#extensions#ctrlp#color_template = 'normal'
 let g:airline#extensions#ctrlp#show_adjacent_modes = 1
-
-" Show any trailing whitespace
-set list
-set listchars=tab:>-,trail:-
 
 " file is large from 5mb
 let g:LargeFile = 1024 * 1024 * 5
@@ -228,3 +261,6 @@ augroup highligh_follows_vim
     autocmd FocusGained * set cursorline
     autocmd FocusLost * set nocursorline
 augroup END
+
+" open current buffer as new tab and use ctrl+w c .. to get back
+nnoremap <Leader>m :tab sp<CR>
