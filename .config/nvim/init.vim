@@ -94,19 +94,16 @@ Plug 'Shougo/deoplete.nvim'
 
 call plug#end()
 
+""" :terminal magic
 
 " Window split settings
 highlight TermCursor ctermfg=red guifg=red
 set splitbelow
 set splitright
 
-" workaround for bug where buffer switch closes term:// buffers
-"autocmd TermOpen * set bufhidden=hide
-
 " term in a split, also reuse existing terms
 nnoremap <Leader>t :call TermEnter()<CR>
 
-tnoremap <F12> <C-\><C-n> 
 set switchbuf+=useopen
 function! TermEnter()
   let bufcount = bufnr("$")
@@ -134,21 +131,25 @@ function! TermEnter()
     execute "resize 15"
   endif
 endfunction
-" easy terminal escaping
+
+" easy terminal to command mode
 tnoremap <Esc> <C-\><C-n>
 
-" trying to get the terminal to behave
-" tnoremap <C-Right> <Esc><C-Right>
-" tnoremap <C-Left>  <Esc><C-Left>
+" crtl+<left/right> for word back and forward in insert mode
+tnoremap <C-Left> <m-b>
+tnoremap <C-Right> <m-f>
 
+" more scrollback buffer
 :au TermOpen * :let  g:terminal_scrollback_buffer_size=100000
 
-" Window navigation function
-":au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+" Window navigation keys
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+
+
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
