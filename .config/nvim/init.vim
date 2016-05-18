@@ -49,10 +49,14 @@ Plug 'tomtom/tlib_vim'
 " file find and more
 Plug 'Shougo/unite.vim'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-nnoremap <Leader>f :Unite -start-insert file_rec/async<CR>
-nnoremap <Leader>g :Unite grep:.<CR>
-nnoremap <Leader>b :Unite buffer<CR>
-nnoremap <Leader>r :Unite register<CR>
+nnoremap <Leader>f :Unite -start-insert -force-redraw -toggle -no-split -resume file_rec/neovim<CR>
+nnoremap <Leader>g :Unite -toggle -no-split -force-redraw -resume grep:.<CR>
+nnoremap <Leader>s :UniteWithCursorWord -toggle -no-split -force-redraw -resume grep:.<CR>
+nnoremap <Leader>b :Unite -toggle -no-split -resume buffer:-<CR>
+nnoremap <Leader>r :Unite -toggle -no-split -resume register<CR>
+
+" dont select first match - confusing
+let g:unite_enable_auto_select = 0
 
 " apt-get install silversearcher-ag
 if executable('ag')
@@ -60,6 +64,7 @@ if executable('ag')
   let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --hidden'
   let g:unite_source_grep_recursive_opt = ''
 endif
+
 
 " nice statusbar
 Plug 'bling/vim-airline'
@@ -103,6 +108,9 @@ set splitright
 
 " term in a split, also reuse existing terms
 nnoremap <Leader>t :call TermEnter()<CR>
+
+" dont close terminal buffer
+autocmd TermOpen * set bufhidden=hide
 
 set switchbuf+=useopen
 function! TermEnter()
@@ -184,6 +192,7 @@ set linespace=1 " add some line space for easy reading
 set list
 set noshowmode
 set relativenumber
+set number
 set pastetoggle=<F10>
 set scrolloff=3 " don't scroll any closer to top/bottom
 set secure
@@ -217,11 +226,9 @@ let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#branch#empty_message = 'no scm'
 let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'
-let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#hunks#enabled = 1
 let g:airline#extensions#hunks#hunk_symbols = ['+', '~', '-']
-let g:airline#extensions#ctrlp#color_template = 'normal'
-let g:airline#extensions#ctrlp#show_adjacent_modes = 1
+let g:airline_section_b = '%{getcwd()}'
 
 " file is large from 5mb
 let g:LargeFile = 1024 * 1024 * 5
@@ -265,3 +272,14 @@ augroup END
 
 " open current buffer as new tab and use ctrl+w c .. to get back
 nnoremap <Leader>m :tab sp<CR>
+
+" ctags
+let g:tagbar_type_puppet = {
+    \ 'ctagstype': 'puppet',
+    \ 'kinds': [
+        \'c:class',
+        \'s:site',
+        \'n:node',
+        \'d:definition'
+      \]
+    \}
