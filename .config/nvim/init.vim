@@ -15,8 +15,17 @@ nnoremap ; :
 
 call plug#begin('~/.config/nvim/plugged')
 
+" gr to replace with buffer without yank
+Plug 'vim-scripts/ReplaceWithRegister'
+
 " color nested [({
 Plug 'luochen1990/rainbow'
+
+" edit surrounding
+Plug 'tpope/vim-surround'
+
+" copy to system clipboard with cp
+Plug 'christoomey/vim-system-copy'
 
 " syntax based closing statements
 Plug 'tpope/vim-endwise'
