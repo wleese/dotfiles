@@ -15,6 +15,28 @@ nnoremap ; :
 
 call plug#begin('~/.config/nvim/plugged')
 
+" 2 char f behavior
+Plug 'justinmk/vim-sneak'
+nmap f <Plug>Sneak_s
+nmap F <Plug>Sneak_S
+xmap f <Plug>Sneak_s
+xmap F <Plug>Sneak_S
+omap f <Plug>Sneak_s
+omap F <Plug>Sneak_S
+
+" tagsbar
+Plug 'majutsushi/tagbar'
+nmap <F8> :TagbarToggle<CR>
+let g:tagbar_type_puppet = {
+    \ 'ctagstype': 'puppet',
+    \ 'kinds': [
+        \'c:class',
+        \'s:site',
+        \'n:node',
+        \'d:definition'
+      \]
+    \}
+
 " gr to replace with buffer without yank
 Plug 'vim-scripts/ReplaceWithRegister'
 
@@ -56,22 +78,43 @@ Plug 'godlygeek/tabular'
 Plug 'tomtom/tlib_vim'
 
 " file find and more
+"Plug 'Shougo/denite.vim'
 Plug 'Shougo/unite.vim'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-nnoremap <Leader>f :Unite -start-insert -force-redraw -toggle -no-split -resume file_rec/neovim<CR>
-nnoremap <Leader>g :Unite -toggle -no-split -force-redraw -resume grep:.<CR>
-nnoremap <Leader>s :UniteWithCursorWord -toggle -no-split -force-redraw -resume grep:.<CR>
+" nnoremap <Leader>f :Unite -start-insert -force-redraw -toggle -no-split -resume file_rec/neovim<CR>
+" nnoremap <Leader>g :Unite -toggle -no-split -force-redraw -resume grep:.<CR>
+"nnoremap <Leader>s :UniteWithCursorWord -toggle -no-split -force-redraw -resume grep:.<CR>
 nnoremap <Leader>b :Unite -toggle -no-split -resume buffer:-<CR>
 nnoremap <Leader>r :Unite -toggle -no-split -resume register<CR>
+Plug 'ctrlpvim/ctrlp.vim'
+let g:ctrlp_max_files = 0
+let g:ctrlp_lazy_update = 1
+" nnoremap <Leader>f :CtrlP :pwd<CR>
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
+Plug 'junegunn/fzf.vim'
+nnoremap <Leader>f :Files<CR>
+
+
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+nnoremap <Leader>g :Ag<space>
+" auto close quickfix window after selection
+autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>
+
+nnoremap s :grep! "\b<C-R><C-W>\b"<CR>:cw<CR><CR>
 
 " dont select first match - confusing
 let g:unite_enable_auto_select = 0
 
 " apt-get install silversearcher-ag
 if executable('ag')
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --hidden'
-  let g:unite_source_grep_recursive_opt = ''
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
 endif
 
 
@@ -292,3 +335,7 @@ let g:tagbar_type_puppet = {
         \'d:definition'
       \]
     \}
+
+" K is google search
+" set keywordprg=~/bin/openfromvim.sh
+nnoremap K :silent ! /home/wleese/bin/openfromvim.sh <c-r><c-w><cr>
