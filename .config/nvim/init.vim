@@ -15,6 +15,12 @@ nnoremap ; :
 
 call plug#begin('~/.config/nvim/plugged')
 
+" highlight current search hit
+Plug 'timakro/vim-searchant'
+
+" better . behavior
+Plug 'tpope/vim-repeat'
+
 " 2 char f behavior
 Plug 'justinmk/vim-sneak'
 nmap f <Plug>Sneak_s
@@ -47,6 +53,7 @@ Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-surround'
 
 " copy to system clipboard with cp
+" requires xsel binary
 Plug 'christoomey/vim-system-copy'
 
 " syntax based closing statements
@@ -209,6 +216,8 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 
+" delete to blackhole
+nnoremap <Leader>d "_dd
 
 
 if !exists('g:airline_symbols')
@@ -235,6 +244,7 @@ syntax on
 
 " set clipboard+=unnamedplus
 " let g:indentLine_noConcealCursor="" " concealing quotes is bad
+"set hidden " allow buffer switching without saving
 set cmdheight=1         " Less Hit Return messages
 set cursorline
 "set display+=uhex " Show unprintables as <xx>
@@ -335,7 +345,13 @@ let g:tagbar_type_puppet = {
         \'d:definition'
       \]
     \}
+let g:tagbar_compact = 1
+let g:tagbar_show_linenumbers = 1
+"autocmd VimEnter * nested :call tagbar#autoopen(1)
+"autocmd FileType * nested :call tagbar#autoopen(0)
 
 " K is google search
 " set keywordprg=~/bin/openfromvim.sh
 nnoremap K :silent ! /home/wleese/bin/openfromvim.sh <c-r><c-w><cr>
+
+"set termguicolors
