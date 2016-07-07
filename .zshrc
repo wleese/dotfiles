@@ -1,6 +1,8 @@
 # Path to your oh-my-zsh installation.
 export ZSH=/home/wleese/.oh-my-zsh
+
 export TERM="xterm-256color"
+
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -50,7 +52,7 @@ DISABLE_AUTO_UPDATE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git last-working-dir compleat vagrant web-search wd)
+#plugins=(git last-working-dir compleat vagrant safe-paste)
 
 # User configuration
 
@@ -62,9 +64,9 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-export GIT_EDITOR=vim
-export VISUAL=vim
-export EDITOR=vim
+export GIT_EDITOR=nvim
+export VISUAL=nvim
+export EDITOR=nvim
 
 alias gp='git pull; git submodule sync; git submodule update --init'
 alias glgg='git log -p -m'
@@ -79,10 +81,13 @@ alias gam='git --amend '
 alias gb='git branch -va'
 alias gr="git remote -v "
 alias gd="git diff "
-alias gs='scmpuff_status' # scmpuff
-alias v='vim --servername me'
-alias vi='vim --servername me'
-alias vim='vim --servername me'
+alias gs='git status'
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
+# alias v='vim --servername me'
+# alias vi='vim --servername me'
+# alias vim='vim --servername me'
 
 function cssh () {
   for i in "$@"; do
@@ -97,20 +102,17 @@ alias vup='vagrant up '
 alias vp='vagrant provision '
 alias vd='vagrant destroy -f '
 alias vstat='vagrant status '
-alias dcrm='docker kill $(docker ps -a -q); docker rm $(docker ps -a -q); docker rmi $(docker images -q)'
-alias d='docker'
-alias di='docker images'
-alias dps='docker ps'
-alias dpsa='docker ps -a'
-alias dl='docker ps -q -l'
 alias sshconfig="~/bin/sshconfig-create.sh > ~/.ssh/config"
 alias ..='cd ..'
 
 alias rg='grep -Ri'
 alias ff="find | grep "
-alias sl="slock"
+alias sl="ls"
 alias psg="ps axf | grep "
 alias resetkde='for i in plasmashell kwin_x11; do killall ${i}; sleep 1s; (nohup ${i} &) ; done'
+alias h='cd ~/p/hiera'
+alias m='cd ~/p/modules'
+alias p='cd ~/p'
 
 function gcm () { 
   git commit -m "$1"
@@ -127,31 +129,55 @@ function vs (){
 function s (){
   ssh -At $1 "echo \"$(cat ~/nicealiases)\" > /tmp/nicealiases; echo \"$(cat ~/nicevimrc)\" > /tmp/nicevimrc; bash --rcfile /tmp/nicealiases "
 }
- 
+
 # show completion menu when number of options is at least 2
 #zstyle ':completion:*' menu select=4
 
 zstyle -s ':completion:*:hosts' hosts _ssh_config
 [[ -r ~/Documents/servers.txt ]] && _ssh_config+=($(cat ~/Documents/servers.txt))
 zstyle ':completion:*:hosts' hosts $_ssh_config
+
 compdef s=ssh
 
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-source ~/.zsh/zsh-autosuggestions/autosuggestions.zsh
-AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=250'
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=250'
 
-# Enable autosuggestions automatically.
-zle-line-init() {
-    zle autosuggest-start
-}
-zle -N zle-line-init
- 
-export CDPATH=~:~/git/puppet-vagrant:~/git/puppet-vagrant/modules:~/git
+## Enable autosuggestions automatically.
+#zle-line-init() {
+#    zle autosuggest-start
+#}
+#zle -N zle-line-init
+
+#export CDPATH=~:~/git/puppet-vagrant:~/git/puppet-vagrant/modules:~/git
 
 function tnew { tmux new-session -As `basename $0`  }
 
 source ~/.zshrc-company
 
-#git status filename binding
-eval "$(scmpuff init -s --aliases=false)"
+#python virtualenvs
+export WORKON_HOME=~/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
+
+export GOPATH=$HOME/golang
+export PATH=$PATH:$GOPATH/bin
+
+alias tf='terraform'
+alias ta='terraform apply'
+alias tp='terraform plan'
+alias td='terraform destroy --force'
+alias d='docker'
+alias dl='docker logs'
+alias de='docker exec -ti'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dcrm='docker kill $(docker ps -a -q); docker rm $(docker ps -a -q); docker rmi $(docker images -q)'
+#
+#bindkey "${terminfo[khome]}" beginning-of-line
+#bindkey "${terminfo[kend]}" end-of-line
+# bindkey "^[[1;5D" backward-word
+# bindkey "^[[1;5C" forward-word
+
+[ -z "$NVIM_LISTEN_ADDRESS" ] || alias :='~/bin/vv'
+alias vv=": badd"

@@ -1,62 +1,51 @@
-set pastetoggle=<F10>
-nnoremap <F11> :set nonumber!<CR>:GitGutterDisable<CR>
-
-set noshowmode
-set gdefault
-
-nnoremap <tab> %
-vnoremap <tab> %
-
+nnoremap <F3> :set hlsearch!<CR>
+nnoremap ; :
+set t_Co=256
 :command WQ wq
 :command Wq wq
 :command W w
 :command Q q
-
-
-nnoremap    ;     :
-nnoremap    :     ;
-
-
 syntax on
-set nocompatible
-set langmenu=en
-set fileencodings=utf-8
-set linespace=1
-set cursorline
-set ttyfast
-set encoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,ucs-bom,cp1251
-set fileformat=unix
-set fileformats=unix,dos,mac
-set backspace=indent,eol,start
-set scrolloff=3
-set sidescrolloff=5
-set display+=uhex
-set number
-set autoread
-set autowrite
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-set smarttab
 set autoindent
-set smartindent
-set cindent
-set showmatch
+set backspace=indent,eol,start
+set cmdheight=1
+set cursorline
+set display+=uhex
+set encoding=utf-8
+set expandtab
+set fileencodings=utf-8
+set fileencodings=utf-8,ucs-bom,cp1251
+set fileencoding=utf-8
+set fileformats=unix,dos,mac
+set fileformat=unix
 set hlsearch
-set incsearch
 set ignorecase
+set incsearch
+set laststatus=2
+set linespace=1
+set nocompatible
+set noshowmode
+set pastetoggle=<F10>
+set scrolloff=3
+set secure
+set shiftwidth=2
+set shortmess=aoOtT     
+set showcmd             
+set showmatch           
+set sidescrolloff=5 
 set smartcase
-set cmdheight=1  
-set laststatus=2  
-set shortmess=aoOtT
-set showcmd      
+set smartindent
+set smarttab
+set softtabstop=2
+set tabstop=2
 set timeoutlen=500
-set wildchar=<TAB> 
-set wildmenu
+
+set wildchar=<TAB>      
+set wildmenu            
 set wildmode=longest:full,full
-set wildignore+=*.o,*.obj,*.pyc,*.pyo,*.pyd,*.class,*.lock
-set wildignore+=*.png,*.gif,*.jpg,*.ico
-set wildignore+=.git,.svn,.hg
+
+
+set list
+set listchars=tab:>-,trail:-
+
+:nnoremap <Leader>b :buffers<CR>:buffer<Space>
