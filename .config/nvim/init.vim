@@ -15,8 +15,13 @@ nnoremap ; :
 
 call plug#begin('~/.config/nvim/plugged')
 
+" easy split maximize
+Plug 'szw/vim-maximizer'
+nnoremap <Leader>m :MaximizerToggle<cr>
+
 " highlight current search hit
 Plug 'timakro/vim-searchant'
+
 
 " better . behavior
 Plug 'tpope/vim-repeat'
@@ -42,6 +47,13 @@ let g:tagbar_type_puppet = {
         \'d:definition'
       \]
     \}
+
+" go
+Plug 'fatih/vim-go'
+
+
+" easy zoom windows / doesnt support term:// windows properly
+Plug 'ZoomWin'
 
 " gr to replace with buffer without yank
 Plug 'vim-scripts/ReplaceWithRegister'
@@ -90,39 +102,50 @@ Plug 'Shougo/unite.vim'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 " nnoremap <Leader>f :Unite -start-insert -force-redraw -toggle -no-split -resume file_rec/neovim<CR>
 " nnoremap <Leader>g :Unite -toggle -no-split -force-redraw -resume grep:.<CR>
-"nnoremap <Leader>s :UniteWithCursorWord -toggle -no-split -force-redraw -resume grep:.<CR>
+" :nnoremap <Leader>s :UniteWithCursorWord -toggle -no-split -force-redraw -resume grep:.<CR>
+nnoremap <Leader>s :UniteWithCursorWord -no-split -force-redraw grep:.<CR>
 nnoremap <Leader>b :Unite -toggle -no-split -resume buffer:-<CR>
 nnoremap <Leader>r :Unite -toggle -no-split -resume register<CR>
-Plug 'ctrlpvim/ctrlp.vim'
-let g:ctrlp_max_files = 0
-let g:ctrlp_lazy_update = 1
-" nnoremap <Leader>f :CtrlP :pwd<CR>
+
+nnoremap <Leader>g :Ag<space>
+nnoremap <Tab> :bnext<CR>
+nnoremap <S-Tab> :bprevious<CR>
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
 Plug 'junegunn/fzf.vim'
-nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>f :Files /home/wleese/p<CR>
+"nnoremap <Leader>b :Buffers<CR>
+
+"Plug 'cloudhead/neovim-fuzzy'
+"nnoremap <Leader>f :FuzzyOpen<CR>
 
 
-command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
-nnoremap <Leader>g :Ag<space>
+
+" command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+
 " auto close quickfix window after selection
 autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>
 
-nnoremap s :grep! "\b<C-R><C-W>\b"<CR>:cw<CR><CR>
+"nnoremap s :grep! "\b<C-R><C-W>\b"<CR>:cw<CR><CR>
 
 " dont select first match - confusing
 let g:unite_enable_auto_select = 0
 
+let g:unite_source_grep_command = 'ag'
+let g:unite_source_grep_default_opts =
+      \ '-i --vimgrep --hidden --ignore ' .
+      \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
+
 " apt-get install silversearcher-ag
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
+" if executable('ag')
+"   set grepprg=ag\ --nogroup\ --nocolor
 
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+"   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+"   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-endif
+"   " ag is fast enough that CtrlP doesn't need to cache
+"   let g:ctrlp_use_caching = 0
+" endif
 
 
 " nice statusbar
@@ -195,7 +218,7 @@ function! TermEnter()
   else
     execute "split"
     execute "terminal"
-    execute "resize 15"
+    execute "resize 35"
   endif
 endfunction
 
@@ -214,7 +237,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-
 
 " delete to blackhole
 nnoremap <Leader>d "_dd
@@ -333,7 +355,7 @@ augroup highligh_follows_vim
 augroup END
 
 " open current buffer as new tab and use ctrl+w c .. to get back
-nnoremap <Leader>m :tab sp<CR>
+"nnoremap <Leader>m :tab sp<CR>
 
 " ctags
 let g:tagbar_type_puppet = {
@@ -354,4 +376,14 @@ let g:tagbar_show_linenumbers = 1
 " set keywordprg=~/bin/openfromvim.sh
 nnoremap K :silent ! /home/wleese/bin/openfromvim.sh <c-r><c-w><cr>
 
-"set termguicolors
+let g:bufferline_echo = 0
+
+let g:solarized_termcolors=256
+set background=dark
+colorscheme solarized
+
+" cycle through splits with backspace
+nnoremap <bs> <c-w>w
+
+" go tabs
+au FileType go setlocal noexpandtab nolist
