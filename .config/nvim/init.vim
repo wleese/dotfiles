@@ -5,10 +5,7 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
 endif
 
 " easy toggle to allow nastly mouse based copy
-nnoremap <F11> :GitGutterDisable<CR>:set norelativenumber!<CR>
-
-" disable highlighted last search
-nnoremap <F3> :set hlsearch!<CR>
+nnoremap <F11> :GitGutterDisable<CR>:set norelativenumber!<CR>:set nonumber!<CR>
 
 " no need for shift
 nnoremap ; :
@@ -22,6 +19,8 @@ nnoremap <Leader>m :MaximizerToggle<cr>
 " highlight current search hit
 Plug 'timakro/vim-searchant'
 
+" Smart indent moves - great for yaml
+Plug 'jeetsukumaran/vim-indentwise'
 
 " better . behavior
 Plug 'tpope/vim-repeat'
@@ -66,7 +65,10 @@ Plug 'tpope/vim-surround'
 
 " copy to system clipboard with cp
 " requires xsel binary
-Plug 'christoomey/vim-system-copy'
+"Plug 'christoomey/vim-system-copy'
+
+" copy to sys clipboard
+"set clipboard^=unnamedplus,unnamed
 
 " syntax based closing statements
 Plug 'tpope/vim-endwise'
@@ -175,9 +177,16 @@ Plug 'kana/vim-textobj-user'
 
 " various completion stuff
 Plug 'Shougo/deoplete.nvim'
+let g:deoplete#enable_at_startup = 1
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+set omnifunc=syntaxcomplete#Complete
+
 
 " " be smart about pasting into vim
 " Plug 'ConradIrwin/vim-bracketed-paste'
+
+Plug 'Konfekt/FastFold'
 
 call plug#end()
 
@@ -218,7 +227,7 @@ function! TermEnter()
   else
     execute "split"
     execute "terminal"
-    execute "resize 35"
+    execute "resize 25"
   endif
 endfunction
 
@@ -277,7 +286,6 @@ set list
 set noshowmode
 set relativenumber
 set number
-set pastetoggle=<F10>
 set scrolloff=3 " don't scroll any closer to top/bottom
 set secure
 set shiftwidth=2
@@ -378,12 +386,23 @@ nnoremap K :silent ! /home/wleese/bin/openfromvim.sh <c-r><c-w><cr>
 
 let g:bufferline_echo = 0
 
-let g:solarized_termcolors=256
-set background=dark
-colorscheme solarized
+"let g:solarized_termcolors=256
+"set background=dark
+"colorscheme default
 
 " cycle through splits with backspace
 nnoremap <bs> <c-w>w
 
 " go tabs
 au FileType go setlocal noexpandtab nolist
+
+" remove trailing whitespace
+autocmd BufWritePre *.yaml,*.pp :%s/\s\+$//e
+
+" folding
+autocmd Syntax ,go,json setlocal foldmethod=syntax
+autocmd Syntax go,json normal zR
+autocmd Syntax yaml setlocal foldmethod=indent
+autocmd Syntax yaml normal zR
+
+nnoremap <Leader>a :Gstatus<cr>
