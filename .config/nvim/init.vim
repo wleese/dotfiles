@@ -23,6 +23,7 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('airblade/vim-gitgutter')
   call dein#add('ervandew/supertab')               " all insert mode completions with tab
   call dein#add('fatih/vim-go')
+  call dein#add('zchee/deoplete-go')               " because vim-go only does neocomplete
   call dein#add('jeetsukumaran/vim-indentwise')    " Smart indent moves - great for yaml
   call dein#add('jreybert/vimagit')                " git stuff
   call dein#add('kana/vim-textobj-line')           " line obj
@@ -71,7 +72,6 @@ let g:buftabline_indicators = 1
 " jreybert/vimagit
 let g:magit_default_fold_level=2
 let g:magit_show_magit_mapping="<Leader>g"
-"nnoremap <Leader>g :MagitOnly<CR>
 nnoremap <leader>gps :! gps<CR>
 
 " majutsushi/tagbar
@@ -96,7 +96,7 @@ let g:vim_json_syntax_conceal = 0
 " Denite
 nnoremap <Leader>f :DeniteProjectDir -mode=insert file_rec<CR>
 nnoremap <Leader>s :DeniteProjectDir -mode=insert grep<CR>
-nnoremap <Leader>r :Denite -mode=normal file_mru/file<CR>
+nnoremap <Leader>r :Denite -mode=normal unite:file_mru<CR>
 nnoremap <Leader>re :Denite -mode=normal unite:register<CR>
 
 let g:deoplete#enable_at_startup = 1
