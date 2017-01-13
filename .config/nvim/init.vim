@@ -1,3 +1,4 @@
+
 if &compatible
   set nocompatible               " Be iMproved
 endif
@@ -17,6 +18,7 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('Shougo/denite.nvim')              " Unite dark powered
   call dein#add('Shougo/deoplete.nvim')            " completion
   call dein#add('Shougo/neomru.vim')               " Unite mru
+  call dein#add('Shougo/unite.vim')                " needed for mru, tag
 
   call dein#add('airblade/vim-gitgutter')
   call dein#add('ervandew/supertab')               " all insert mode completions with tab
@@ -25,12 +27,17 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('jreybert/vimagit')                " git stuff
   call dein#add('kana/vim-textobj-line')           " line obj
   call dein#add('kana/vim-textobj-user')           " dependency for line
+  call dein#add('ap/vim-buftabline')               " tab ar becomes buffer bar
   call dein#add('majutsushi/tagbar')               " tagbar
   call dein#add('michaeljsmith/vim-indent-object') " ii is indentation text object
   call dein#add('rafi/awesome-vim-colorschemes')
   call dein#add('rafi/vim-tinyline')               " nice statusbar
   call dein#add('rodjek/vim-puppet')
   call dein#add('rstacruz/vim-closer')             " improves endwise behavior
+
+  call dein#add('ekalinin/Dockerfile.vim')
+  call dein#add('bogado/file-line')                " allow vim file:12343 opening
+  call dein#add('elzr/vim-json')
 
   call dein#add('tpope/vim-commentary')            " gc comment
   call dein#add('tpope/vim-endwise')               " syntax based closing statements
@@ -58,9 +65,13 @@ endif
 "
 let mapleader = " "
 
+" Show modified buffer (because we use set hidden)
+let g:buftabline_indicators = 1
+
 " jreybert/vimagit
 let g:magit_default_fold_level=2
-nnoremap <Leader>g :MagitOnly<CR>
+let g:magit_show_magit_mapping="<Leader>g"
+"nnoremap <Leader>g :MagitOnly<CR>
 nnoremap <leader>gps :! gps<CR>
 
 " majutsushi/tagbar
@@ -79,10 +90,14 @@ let g:tagbar_type_puppet = {
 " handle go imports
 let g:go_fmt_command = "goimports"
 
+" don't hide json quotes
+let g:vim_json_syntax_conceal = 0
+
 " Denite
 nnoremap <Leader>f :DeniteProjectDir -mode=insert file_rec<CR>
 nnoremap <Leader>s :DeniteProjectDir -mode=insert grep<CR>
-nnoremap <Leader>r :Denite -mode=normal file_mru<CR>
+nnoremap <Leader>r :Denite -mode=normal file_mru/file<CR>
+nnoremap <Leader>re :Denite -mode=normal unite:register<CR>
 
 let g:deoplete#enable_at_startup = 1
 set omnifunc=syntaxcomplete#Complete
@@ -120,6 +135,17 @@ call denite#custom#map(
       \ '<denite:move_to_previous_line>',
       \ 'noremap'
       \)
+"" unite: Enable navigation with control-j and control-k in insert mode
+"autocmd FileType unite call s:unite_my_settings()
+"function! s:unite_my_settings()
+"    " Overwrite settings.
+"
+"    " Enable navigation with control-j and control-k in insert mode
+"    imap <buffer> <C-n>   <Plug>(unite_select_next_line)
+"    nmap <buffer> <C-n>   <Plug>(unite_select_next_line)
+"    imap <buffer> <C-p>   <Plug>(unite_select_previous_line)
+"    nmap <buffer> <C-p>   <Plug>(unite_select_previous_line)
+"endfunction
 
 " fix common typos
 :command WQ wq
@@ -134,6 +160,7 @@ set expandtab
 set ignorecase
 set linespace=1 " add some line space for easy reading
 set list
+set hidden       " allow buffer switching without saving an existing buffer
 set mouse-=a " Disable mouse click to go to position
 set noshowmode
 set number
@@ -224,7 +251,7 @@ set splitbelow
 set splitright
 
 " term in a split, also reuse existing terms
-nnoremap <Leader>t :call TermEnter()<CR>
+nnoremap \t :call TermEnter()<CR>
 
 " dont close terminal buffer
 autocmd TermOpen * set bufhidden=hide
@@ -259,5 +286,3 @@ endfunction
 
 tnoremap <Esc> <C-\><C-n> " easy terminal to command mode
 au TermOpen * :let  g:terminal_scrollback_buffer_size=100000  " more scrollback buffer
-
-
