@@ -1,3 +1,4 @@
+export EDITOR=vi;
 alias psx='ps auxf';
 alias ..='cd ..';
 alias psg='ps aux | grep -i --color';
@@ -31,3 +32,4 @@ alias de='docker exec -ti'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias dl='docker logs'
+alias jqq='python -m json.tool'

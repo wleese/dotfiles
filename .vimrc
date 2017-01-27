@@ -259,3 +259,16 @@ let g:syntastic_puppet_puppetlint_args="no-80chars-check"
 
 " switch buffers with F5
 :nnoremap <Leader>b :buffers<CR>:buffer<Space>
+
+
+augroup highlight_follows_focus
+    autocmd!
+    autocmd WinEnter * set cursorline
+    autocmd WinLeave * set nocursorline
+augroup END
+
+augroup highligh_follows_vim
+    autocmd!
+    autocmd FocusGained * set cursorline
+    autocmd FocusLost * set nocursorline
+augroup END

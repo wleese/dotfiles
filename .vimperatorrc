@@ -1,13 +1,18 @@
 " Ctrl-a
-"inoremap <C-a> <C-Home><C-S-End>
-:inoremap <C-a> <Insert><C-a><Insert>
+inoremap <C-a> <Insert><C-a><Insert>
 
 " link to letters not numbers
 set hintchars=hjklasdfgyuiopqwertnmzxcvb
 
+" no urlbar
+set gui=nonavigation
+
 " Items which are completed at the :open prompts.
 " just location bar entries
 set complete=l
+
+" show tab numbers
+set tn
 
 " better scrolling
 noremap j 5j
@@ -19,8 +24,6 @@ set defsearch=google
 " don't focus any "input" elements automatically when open pages.
 "set focuscontent
 
-ignorekeys add gmail.com
-ignorekeys add mail.google.com
 ignorekeys add bolcom.hipchat.com
 ignorekeys add docs.google.com
 
@@ -29,11 +32,13 @@ ignorekeys add docs.google.com
 " Normal Mode Mappings
 nnoremap <C-f> /
 nnoremap <C-w> :tabclose<CR>
-nnoremap <C-c> <C-v><C-c>
-nnoremap <C-v> <C-v><C-v>
-nnoremap <C-x> <C-v><C-x>
+"nnoremap <C-c> <C-v><C-c>
+"nnoremap <C-v> <C-v><C-v>
+"nnoremap <C-x> <C-v><C-x>
 
 " Insert Mode Mappings
-inoremap <C-c> <C-v><C-c>
-inoremap <C-v> <C-v><C-v>
-inoremap <C-x> <C-v><C-x>
+"inoremap <C-c> <C-v><C-c>
+"inoremap <C-v> <C-v><C-v>
+"inoremap <C-x> <C-v><C-x>
+
+js services.services.autoCompleteSearch.class_="@mozilla.org/autocomplete/search;1?name=unifiedcomplete"
