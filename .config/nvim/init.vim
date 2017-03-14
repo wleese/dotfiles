@@ -1,4 +1,3 @@
-
 if &compatible
   set nocompatible               " Be iMproved
 endif
@@ -17,13 +16,17 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   " Add or remove your plugins here:
   call dein#add('Shougo/denite.nvim')              " Unite dark powered
   call dein#add('Shougo/deoplete.nvim')            " completion
+  call dein#add('Shougo/deoplete-rct')             " Ruby code completion. requires gem install rcodetools
+  call dein#add('zchee/deoplete-jedi')             " Python code completion. requires python-jedi
+  call dein#add('zchee/deoplete-go')               " because vim-go only does neocomplete
   call dein#add('Shougo/neomru.vim')               " Unite mru
   call dein#add('Shougo/unite.vim')                " needed for mru, tag
+  call dein#add('jodosha/vim-godebug')             " godebug. requires delve: go get github.com/derekparker/delve/cmd/dlv
 
+  call dein#add('Neomake/neomake')             " async syntax checker
   call dein#add('airblade/vim-gitgutter')
   call dein#add('ervandew/supertab')               " all insert mode completions with tab
   call dein#add('fatih/vim-go')
-  call dein#add('zchee/deoplete-go')               " because vim-go only does neocomplete
   call dein#add('jeetsukumaran/vim-indentwise')    " Smart indent moves - great for yaml
   call dein#add('jreybert/vimagit')                " git stuff
   call dein#add('kana/vim-textobj-line')           " line obj
@@ -48,6 +51,10 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('tpope/vim-sleuth')                " smart shiftwidth & expandtab
   call dein#add('tpope/vim-vinegar')               " fileman
 
+  call dein#add('ryanoasis/vim-devicons')          " various nice icons
+  call dein#add('rhysd/clever-f.vim')              " ff is repeat f plus highlighting
+
+
   " Required:
   call dein#end()
   call dein#save_state()
@@ -70,9 +77,10 @@ let mapleader = " "
 let g:buftabline_indicators = 1
 
 " jreybert/vimagit
-let g:magit_default_fold_level=2
+let g:magit_default_fold_level=1
+let g:magit_default_sections = ['commit', 'staged', 'unstaged']
 let g:magit_show_magit_mapping="<Leader>g"
-nnoremap <leader>gps :! gps<CR>
+nnoremap <leader>gps :! gps $(dirname %:p)<CR>
 
 " majutsushi/tagbar
 nmap <F8> :TagbarToggle<CR>
@@ -96,8 +104,8 @@ let g:vim_json_syntax_conceal = 0
 " Denite
 nnoremap <Leader>f :DeniteProjectDir -mode=insert file_rec<CR>
 nnoremap <Leader>s :DeniteProjectDir -mode=insert grep<CR>
-nnoremap <Leader>r :Denite -mode=normal unite:file_mru<CR>
-nnoremap <Leader>re :Denite -mode=normal unite:register<CR>
+nnoremap <Leader>m :Denite -mode=normal unite:file_mru<CR>
+nnoremap <Leader>r :Denite -mode=normal unite:register<CR>
 
 let g:deoplete#enable_at_startup = 1
 set omnifunc=syntaxcomplete#Complete
@@ -135,17 +143,6 @@ call denite#custom#map(
       \ '<denite:move_to_previous_line>',
       \ 'noremap'
       \)
-"" unite: Enable navigation with control-j and control-k in insert mode
-"autocmd FileType unite call s:unite_my_settings()
-"function! s:unite_my_settings()
-"    " Overwrite settings.
-"
-"    " Enable navigation with control-j and control-k in insert mode
-"    imap <buffer> <C-n>   <Plug>(unite_select_next_line)
-"    nmap <buffer> <C-n>   <Plug>(unite_select_next_line)
-"    imap <buffer> <C-p>   <Plug>(unite_select_previous_line)
-"    nmap <buffer> <C-p>   <Plug>(unite_select_previous_line)
-"endfunction
 
 " fix common typos
 :command WQ wq
@@ -286,3 +283,33 @@ endfunction
 
 tnoremap <Esc> <C-\><C-n> " easy terminal to command mode
 au TermOpen * :let  g:terminal_scrollback_buffer_size=100000  " more scrollback buffer
+
+" jump to puppet definition (no line number jump yet)
+autocmd FileType puppet nmap gd "zyiW :call FindPuppetDefinition('<C-r>z')<CR>
+function! FindPuppetDefinition(word)
+  if !empty(a:word)
+    silent !clear
+    let output = system('/usr/local/bin/goto-puppet-definition.sh ' . a:word)
+
+    vsplit __Puppet_Definition__
+    normal! ggdG
+    setlocal filetype=puppetdefinition
+    setlocal buftype=nofile
+
+    let l:bufn = bufnr("%")
+    exec ":bwipeout " l:bufn
+
+    exec "keepalt edit " . output
+    exec "normal! zz"
+  else
+    echo "Empty search term"
+  endif
+endfunction
+
+autocmd User VimagitBufferInit call system(g:magit_git_cmd . " add -u " . magit#git#top_dir())
+
+" Workaround for weird chars in broken terminator (works in konsole tho)
+let $NVIM_TUI_ENABLE_CURSOR_SHAPE=0
+
+" syntax check puppet
+autocmd! BufWritePost *.pp,*.sh Neomake
