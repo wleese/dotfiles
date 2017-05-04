@@ -54,6 +54,10 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('ryanoasis/vim-devicons')          " various nice icons
   call dein#add('rhysd/clever-f.vim')              " ff is repeat f plus highlighting
 
+  call dein#add('blueyed/vim-qf_resize')           " auto resize qf windows based on content
+
+  call dein#add('rhysd/conflict-marker.vim')       " amerge conflict marker 
+
 
   " Required:
   call dein#end()
@@ -309,7 +313,16 @@ endfunction
 autocmd User VimagitBufferInit call system(g:magit_git_cmd . " add -u " . magit#git#top_dir())
 
 " Workaround for weird chars in broken terminator (works in konsole tho)
-let $NVIM_TUI_ENABLE_CURSOR_SHAPE=0
+"let $NVIM_TUI_ENABLE_CURSOR_SHAPE=0
+"set guicursor=
 
 " syntax check puppet
 autocmd! BufWritePost *.pp,*.sh Neomake
+
+"" Open mru if no file
+"autocmd VimEnter * call NoFile()
+"function! NoFile()
+"    if @% == ""
+"        execute 'Denite -mode=normal unite:file_mru'
+"    endif
+"endfunction
