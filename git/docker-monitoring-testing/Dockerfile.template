@@ -1,0 +1,15 @@
+# DOCKER-VERSION: 0.1
+# AUTHOR:         TES <tes@bol.com>
+# DESCRIPTION:    montest
+# TO_BUILD:       ./build.sh
+# TO_RUN:         docker run montest:0.1 /usr/lib64/nagios/plugins/check_http
+
+FROM registry.tools.bol.com/platform/rhel7_bolbase:1.0.11
+MAINTAINER tes@bol.com
+
+RUN docker_yum_install bol-nagios-plugins-check_graphite bol-nagios-plugins-http ruby rubygem-json
+
+LABEL com.bol.docker.description="Easy way to test various plugins locally" \
+      com.bol.docker.usage="FROM registry.tools.bol.com/itops/montest:0.1" \
+      com.bol.docker.type="app" \
+      com.bol.docker.opex="tes"
