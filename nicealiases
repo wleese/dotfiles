@@ -18,7 +18,7 @@ alias spt='sleep 2m; puppet agent -t';
 alias get='curl -s -XGET ';
 alias post='curl -s -XPOST ';
 alias c='cat';
-alias ff='find | grep --color ';
+alias ff='find | grep --color=auto ';
 alias rqa='rpm -qa | grep --color';
 alias rg='grep -Ri --color';
 alias tcr='service tc_instance restart';
@@ -29,7 +29,10 @@ export PS1='\u@\h \w# ';
 function psr { /etc/init.d/atg_instance ps\$1 threaddump; /etc/init.d/atg_instance ps\$1 restart; };
 alias d='docker'
 alias de='docker exec -ti'
+function deb { docker exec -ti \$1 /bin/bash; };
+alias di='docker inspect '
 alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias dl='docker logs'
+alias dlf='docker logs -f'
 alias jqq='python -m json.tool'

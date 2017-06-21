@@ -20,7 +20,6 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('zchee/deoplete-jedi')             " Python code completion. requires python-jedi
   call dein#add('zchee/deoplete-go')               " because vim-go only does neocomplete
   call dein#add('Shougo/neomru.vim')               " Unite mru
-  call dein#add('Shougo/unite.vim')                " needed for mru, tag
   call dein#add('jodosha/vim-godebug')             " godebug. requires delve: go get github.com/derekparker/delve/cmd/dlv
 
   call dein#add('Neomake/neomake')             " async syntax checker
@@ -57,6 +56,9 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('blueyed/vim-qf_resize')           " auto resize qf windows based on content
 
   call dein#add('rhysd/conflict-marker.vim')       " amerge conflict marker 
+
+  " call dein#add('vifm/neovim-vifm')
+  " call dein#add('vifm/vifm')
 
 
   " Required:
@@ -108,8 +110,8 @@ let g:vim_json_syntax_conceal = 0
 " Denite
 nnoremap <Leader>f :DeniteProjectDir -mode=insert file_rec<CR>
 nnoremap <Leader>s :DeniteProjectDir -mode=insert grep<CR>
-nnoremap <Leader>m :Denite -mode=normal unite:file_mru<CR>
-nnoremap <Leader>r :Denite -mode=normal unite:register<CR>
+nnoremap <Leader>m :Denite -mode=normal file_mru<CR>
+nnoremap <Leader>r :Denite -mode=normal register<CR>
 
 let g:deoplete#enable_at_startup = 1
 set omnifunc=syntaxcomplete#Complete
@@ -319,10 +321,11 @@ autocmd User VimagitBufferInit call system(g:magit_git_cmd . " add -u " . magit#
 " syntax check puppet
 autocmd! BufWritePost *.pp,*.sh Neomake
 
-"" Open mru if no file
-"autocmd VimEnter * call NoFile()
-"function! NoFile()
-"    if @% == ""
-"        execute 'Denite -mode=normal unite:file_mru'
-"    endif
-"endfunction
+function InsertIfEmpty()
+    if @% == ""
+        " No filename for current buffer
+        exec ":Denite -mode=normal file_mru"
+    endif
+endfunction
+
+au VimEnter * call InsertIfEmpty()

@@ -9,7 +9,7 @@ export COLORTERM="truecolor"
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+ZSH_THEME="william"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -57,7 +57,7 @@ DISABLE_AUTO_UPDATE="true"
 
 # User configuration
 
-export PATH="/usr/lib/go/bin:/home/wleese/perl5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PATH="/opt/puppetlabs/bin/puppet:/usr/local/go/bin:/home/wleese/perl5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -107,8 +107,9 @@ alias vstat='vagrant status '
 alias sshconfig="~/bin/sshconfig-create.sh > ~/.ssh/config"
 alias ..='cd ..'
 
-alias rg='grep -Rin'
-alias ff="find | grep "
+alias rg='grep -Rin --color=always'
+alias grep='grep --color=auto'
+alias ff="find | grep  "
 alias sl="ls"
 alias psg="ps axf | grep "
 alias resetkde='for i in plasmashell kwin_x11; do killall ${i}; sleep 1s; (nohup ${i} &) ; done'
@@ -126,10 +127,6 @@ function lsv() {
 
 function vs (){
   vagrant ssh $1 -- -At  "echo \"$(cat ~/nicealiases)\" > /tmp/nicealiases; echo \"$(cat ~/nicevimrc)\" > /tmp/nicevimrc; bash --rcfile /tmp/nicealiases "
-}
-
-function s (){
-  ssh -At $1 "echo \"$(cat ~/nicealiases)\" > /tmp/nicealiases; echo \"$(cat ~/nicevimrc)\" > /tmp/nicevimrc; bash --rcfile /tmp/nicealiases "
 }
 
 # show completion menu when number of options is at least 2
@@ -162,7 +159,7 @@ source ~/.zshrc-company
 #export WORKON_HOME=~/.virtualenvs
 #source /usr/local/bin/virtualenvwrapper.sh
 
-export GOPATH=$HOME/golang
+export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 # alias tf='terraform'
@@ -180,12 +177,17 @@ alias dcrm='docker kill $(docker ps -a -q); docker rm $(docker ps -a -q); docker
 alias vsu='vagrant suspend'
 alias vr='vagrant resume'
 alias magit="vim -c MagitOnly"
+alias less="less -R"
+alias kc="kubectl"
 function dbr {
   OUT="$(docker build . | tail -n1)"
   ID=$(echo "${OUT}" | awk '/Successfully/ {print $3}')
   if [[ $? -eq 0 ]]; then
     docker run $ID
   fi
+}
+function ke {
+  kubectl exec $1 -ti /bin/bash
 }
 function drs { docker run -ti $1 /bin/bash  }
 function dk { 
@@ -213,3 +215,10 @@ fi
 if [ -f /home/wleese/google-cloud-sdk/completion.zsh.inc ]; then
   source '/home/wleese/google-cloud-sdk/completion.zsh.inc'
 fi
+
+function vsa {
+  cd ~/p
+  for i in $(vagrant status | grep running | awk '{print $1}'); do
+    vagrant suspend $i
+  done
+}
