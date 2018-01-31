@@ -52,6 +52,8 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('w0rp/ale')                        " async syntax checker when typing
   call dein#add('zchee/deoplete-go')               " because vim-go only does neocomplete
   call dein#add('zchee/deoplete-jedi')             " Python code completion. requires python-jedi
+  call dein#add('davidhalter/jedi-vim')            " Python IDE stuff like goto def. disable autocompl due to conflict with deoplete-jedi
+  call dein#add('kassio/neoterm')
 
   " Required:
   call dein#end()
@@ -167,6 +169,7 @@ map Q :q!<CR>
 nnoremap ; :
 
 "set clipboard+=unnamedplus " always use clipboard
+set formatoptions+=j " smart join lines with comments
 set cmdheight=1         " Less Hit Return messages
 set cursorline
 set expandtab
@@ -271,30 +274,28 @@ autocmd FileType qf nnoremap <buffer> <CR> <CR>:cclose<CR>  " auto close quickfi
 nnoremap <F11> :GitGutterDisable<CR>:set norelativenumber!<CR>:set nonumber!<CR> " easy toggle to allow nastly mouse based copy
 
 
-" ------------- Embedded terminal stuff -------------
-" Window split settings
-highlight TermCursor ctermfg=red guifg=red
-set splitbelow
-set splitright
+" " ------------- Embedded terminal stuff -------------
+let g:neoterm_position = 'horizontal'
+let g:neoterm_automap_keys = '<leader>t'
 
-"" term in a split, also reuse existing terms
-nnoremap <leader>t :call TermEnter()<CR>
-function! TermEnter()
-  execute ":below 10sp term://$SHELL"
-  let  g:terminal_scrollback_buffer_size=100000
-endfunction
+nnoremap <silent>  <leader>t :call neoterm#toggle()<cr>
+nnoremap <silent> <f10> :TREPLSendFile<cr>
+nnoremap <silent> <f9> :TREPLSendLine<cr>
+vnoremap <silent> <f9> :TREPLSendSelection<cr>
+
+" " Window split settings
+" highlight TermCursor ctermfg=red guifg=red
+" set splitbelow
+" set splitright
+"
+let  g:terminal_scrollback_buffer_size=100000
 
 " terminal start in insert mode
-" auto insert mode when switching to term
-autocmd TermOpen * startinsert
+let g:neoterm_autojump = 1
+let g:neoterm_autoinsert = 1
 
-" exit to normal mode
-autocmd BufLeave term://* stopinsert
-
-set switchbuf+=useopen
-
-"tnoremap <Esc> <C-\><C-n> " easy terminal to command mode
-tnoremap <ESC> <C-\><C-n><CR>
+" map esc to exit terminal and switch to previous split
+tnoremap <ESC> <C-\><C-n><C-w>w<CR>
 
 " jump to puppet definition (no line number jump yet)
 autocmd FileType puppet nmap gd "zyiW :call FindPuppetDefinition('<C-r>z')<CR>
@@ -349,3 +350,7 @@ autocmd VimLeave * call system('echo ' . shellescape(getreg('+')) . ' | xclip -s
 " determines the minimum number of screen lines that you would like above and
 " below the cursor
 set scrolloff=5
+
+" conflicts with deoplete-jedi
+let g:jedi#completions_enabled = 0
+let g:jedi#goto_command = "gD"
