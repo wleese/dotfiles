@@ -1,0 +1,415 @@
+:toc:
+
+= Setup development environment
+
+Before doing any development work on any component of the R2D2 system, you'll need a local development
+environment bootstrapped. This section will go into details on how to setup such an environment. First
+read about link:#getting-up-running[Getting up & running] before continuing how you can
+link:#initiate-your-first-r2d2-run[Initiate your first R2D2 run].
+
+== Getting up & running
+
+The main steps are:
+
+ 1. *Setup docker*, as R2D2 relies heavily on docker.
+ 2. *Create directory structure* for the diffent components of the R2D2 system. Make sure you're
+    familiar with link:project_layout.html[the project layout] before doing this.
+ 3. _(optionally)_ *Setup Kubernetes* if you're planning on doing Kubernetes work.
+
+=== 1. Setup docker
+
+The R2D2 application and all its dependencies are distributed as a docker container. To build or run
+this container you will need to install Docker on your computer. The Docker Community Edition (CE) is
+sufficient.
+
+To do this, follow the official Docker documentation on https://docs.docker.com/engine/installation/.
+
+Once you've got Docker up and running on your machine, you can either build the docker image yourself,
+or use the image from bol.com's internal registry:
+
+[source,bash]
+----
+docker pull registry.tools.bol.com/platform/r2d2-app:v1.0
+----
+
+=== 2. Creating directory structure
+
+A recommended way of setting up the directory structure for R2D2 is by creating a `r2d2` subdirectory
+in your home directory and cloning all the repositories in that subdir.
+
+[source,bash]
+----
+$ mkdir ${HOME}/r2d2
+----
+
+R2D2 has one piece of _persistent state_, which we call the `data` dir. In it is the SQLite database
+that stores history and logs and the state from Puppet and Terraform. Using `import` you'll always be
+able to recreate the state but it's good practice to keep this persistent on your local machine.
+
+Just an empty directory for now is enough:
+
+[source,bash]
+----
+$ mkdir ${HOME}/r2d2/data
+----
+
+==== If you're planning on contributing to R2D2 application
+
+Then you'll need to clone the `r2d2-app` repository:
+
+[source,bash]
+----
+$ git clone https://gitlab.tools.bol.com/r2d2/r2d2-app ${HOME}/r2d2/app
+...
+----
+
+==== If you're planning on contributing to the Puppet modules
+
+Then you'll need to clone the `r2d2-base` repository:
+
+[source,bash]
+----
+$ git clone https://gitlab.tools.bol.com/r2d2/r2d2-base ${HOME}/r2d2/base
+...
+----
+
+Also, you'll need to clone the module that you want to work on. Check the `r2d2-config.yaml` file in the base to
+see where it resides on GitLab. Then:
+
+[source,bash]
+----
+$ mkdir ${HOME}/r2d2/modules
+$ git clone https://gitlab.tools.bol.com/r2d2/r2d2-puppet-modules/<modulename> ${HOME}/r2d2/modules
+----
+
+The last `git clone` needs to be done for each module you want to work on.
+
+=== 3. Setup Kubernetes
+
+If you intend to use Kubernetes resources, a `kubeconfig` and a `cluster.ca` need to be setup locally as well.
+
+The `sbx` Infra Project is being managed through the R2D2 application, which means that the `kubeconfig` and `cluster.ca`
+that are created reside on the R2D2 application machines in the DC. However, when running r2d2 locally,
+you will need to put those files manually on your system. They're available as snippets on GitLab:
+
+[source,bash]
+----
+$ cd ${HOME}/r2d2/data
+$ mkdir -p bolcom-sbx/puppet-executor-data/kubernetes_clusters/bolcom-sbx-4wu
+$ chdir bolcom-sbx/puppet-executor-data/kubernetes_clusters/bolcom-sbx-4wu
+$ wget https://gitlab.tools.bol.com/snippets/80/raw -O kubeconfig
+$ wget https://gitlab.tools.bol.com/snippets/84/raw -O cluster.ca
+$ cd -
+$ mkdir -p bolcom-sbx/puppet-executor-data/gcp_service_account
+$ chdir bolcom-sbx/puppet-executor-data/gcp_service_account
+$ wget https://gitlab.tools.bol.com/snippets/86/raw -O imagepull.json
+----
+
+== Initiate your first R2D2 run
+
+=== Creating a simple specfile
+
+To get yourself a nice project to test in, create a spec file with a `Project resource`. See
+link:../end-user/the_project_resource.html#naming-your-project[the Project naming documentation] for
+more information on how to best name your project.
+
+Assuming you are developing a new resource for application `xyz`, your first spec will look
+like this:
+
+[source,yaml]
+----
+%YAML 1.1
+---
+kind: ApplicationProject
+name: xyz
+spec:
+  environment: sbx
+  opex: teamprovisioning
+  with_gke: true
+----
+
+The `environment` and `opex` parameters for developing in the sandbox need to be set as in this example.
+However `with_gke: true` can be omitted if you are not interested in any Kubernetes resources.
+
+Save the file in your `r2d2` directory as `xyz.yaml`. You're now ready to run R2D2 application!
+
+=== Starting R2D2 application
+
+To start R2D2 application, you can either use your local checkout of `r2d2-app` or the ready-made docker
+image from bol.com's registry. For this example we'll assume the latter.
+
+Let's do a `dry-run`:
+[source,bash]
+----
+cat xyz.yaml | docker run \ <1>
+   --rm \ <2>
+   -i \ <3>
+   --net host \ <4>
+   -v ${HOME}/r2d2:/r2d2 \ <5>
+   -v /var/run/docker.sock:/var/run/docker.sock \ <6>
+   registry.tools.bol.com/platform/r2d2-app:v1.0 \ <7>
+       execute \ <8>
+           --base file:///r2d2/base \ <9>
+           --data /r2d2/data \ <10>
+           --dry-run <11>
+----
+<1> Start `docker run` and pipe the contains of your spec file to it's STDIN.
+<2> After the docker run, remove this container. Or else you'll end up with _a lot of "exited" containers_.
+<3> Make sure your `docker run` is _interactive_ or else it won't be able to read STDIN.
+<4> Docker needs the same network access as your machine (including access to DC and Google Cloud).
+<5> Mount your local `${HOME}/r2d2` as `/r2d2` in the container. That way your local stuff is available
+    to R2D2 inside the container.
+<6> Mount your docker socket because that's needed to enable container registry when `with_gke` is set to true.
+<7> Use the ready-made docker image from bol.com's registry.
+<8> The `execute` runs inside the container, it's part of R2D2 application and informs R2D2 to _execute
+    a new run from a spec file_.
+<9> Tell R2D2 to use the base from local filesystem by using `file://` and then the location where you
+    mounted your local stuff into the container (that is, `/r2d2` in step 5).
+<10> Tell R2D2 to use store persistent states and history here (remember, `/r2d2/data` points to your
+    local machine's `${HOME}/r2d2/data`).
+<11> Execute this spec in `dry-run` run mode.
+
+If your `dry-run` is succesful, re-run it without `--dry-run`. This should kick off a puppet run that
+will create the project for you. This make take up to a minute for new cloud projects, so be patient.
+If the run succeeded you can verify your project exists by looking it up in the Google Cloud console.
+
+To make changes or add additional resources, modify your `xyz.yaml` spec file and re-run!
+
+NOTE: Any changes you made to Puppet code _won't be used just yet_. Remember that at this point, even though
+ you mounted your own `r2d2-base` in the container and told R2D2 to use this base, it's `r2d2-config.yaml`
+ still points to Puppet modules on GitLab! So R2D2 will download all Puppet modules from there.
+
+
+==== Create a `run.sh` helper
+
+When developing puppet modules, you'll be running `r2d2-app` a lot and the command to run is quite long.
+You can create a small shell script to make your life easier.
+
+With the example directory structure and specfile described previously, a `run.sh` can look like this:
+[source,bash]
+----
+cat xyz.yaml | docker run --rm -i --net host \
+   -v ${HOME}/r2d2:/r2d2 \
+   -v /var/run/docker.sock:/var/run/docker.sock \
+   registry.tools.bol.com/platform/r2d2-app:v1.0 execute \
+       --base file:///r2d2/base \
+       --data /r2d2/data \
+       $@
+----
+
+This assumes the `run.sh` resides in the `r2d2` directory in your home directory (`${HOME}/r2d2/run.sh`).
+The `$@` at the end allows you to easily pass additional parameters to your run like `--noop` or `--dry-run`.
+
+
+== Enabling PuppetDB support
+
+=== Bootstrapping PuppetDB environment
+
+For bootstrapping a PuppetDB environment, we need three containers: puppetserver, postgres and puppetdb.
+Puppetserver is needed for generating the SSL keys for communication and is only needed during bootstrap.
+
+==== Puppetserver
+
+Start the puppetserver:
+[source,bash]
+----
+docker run -d --name puppet -p 8140:8140 --hostname puppet puppet/puppetserver
+----
+
+Wait for it to start which can be verified using `docker logs -f puppet`
+
+==== Postgres Database
+
+Start the postgres database. We'll make sure to keep the data persistent outside the container.
+
+[source,bash]
+----
+mkdir -p ${HOME}/r2d2/puppetdb/postgres
+docker run -d --name postgres -v ${HOME}/r2d2/puppetdb/postgres/:/var/lib/postgresql/data -e POSTGRES_PASSWORD=puppetdb -e POSTGRES_USER=puppetdb puppet/puppetdb-postgres
+----
+
+Again, use log tailing to make sure it starts up properly. In your `r2d2/puppetdb/postgres` directory
+various `postgres` related files and directories should have been created.
+
+==== PuppetDB server
+
+Start the puppetdb server. For puppetdb server we need to make sure to persist the generated
+SSL certificates.
+
+[source,bash]
+----
+mkdir ${HOME}/r2d2/puppetdb/ssl
+docker run -d -v ${HOME}/r2d2/puppetdb/ssl:/etc/puppetlabs/puppet/ssl --link postgres:postgres --link puppet:puppet -p 8080:8080 -p 8081:8081 --hostname puppetdb --name puppetdb puppet/puppetdb
+----
+
+Use `docker logs -f puppetdb` to follow the startup of the container.
+
+The certificates that are generated are put in the puppet agents SSL directory. During start up of
+the container, there is a check to see if `/etc/puppetlabs/puppetdb/ssl` exists and if it does, no
+certificates are generated. That SSL directory is specific for PuppetDB and is populated by a setup
+script. We can't mount this directory directly because it contains additional files needed to
+start PuppetDB. To work around that, we'll have to do some manual steps to emulate what the puppetdb
+ssl setup script is doing.
+
+On your PC, do the following:
+----
+cd ${HOME}/r2d2/puppetdb/ssl
+mv certs/ca.pem .
+mv certs/puppetdb.pem ./public.pem
+mv private_keys/puppetdb.pem ./private.pem
+rm -rf certificate_requests certs crl.pem private private_keys public_keys
+chmod go+r private.pem
+----
+
+Next, in the same directory (`${HOME}/r2d2/puppetdb/ssl`) create a file called `jetty.ini` with
+the following contents:
+----
+[jetty]
+# IP address or hostname to listen for clear-text HTTP. To avoid resolution
+# issues, IP addresses are recommended over hostnames.
+# Default is `localhost`.
+host = 0.0.0.0
+
+# Port to listen on for clear-text HTTP.
+port = 8080
+
+# The following are SSL specific settings. They can be configured
+# automatically with the tool `puppetdb ssl-setup`, which is normally
+# ran during package installation.
+
+# IP address to listen on for HTTPS connections. Hostnames can also be used
+# but are not recommended to avoid DNS resolution issues. To listen on all
+# interfaces, use `0.0.0.0`.
+ssl-host = 0.0.0.0
+
+# The port to listen on for HTTPS connections
+ssl-port = 8081
+
+# Private key path
+ssl-key = /etc/puppetlabs/puppetdb/ssl/private.pem
+
+# Public certificate path
+ssl-cert = /etc/puppetlabs/puppetdb/ssl/public.pem
+
+# Certificate authority path
+ssl-ca-cert = /etc/puppetlabs/puppetdb/ssl/ca.pem
+
+# Access logging configuration path. To turn off access logging
+# comment out the line with `access-log-config=...`
+access-log-config = /etc/puppetlabs/puppetdb/logging/request-logging.xml
+----
+
+==== Local environment
+
+First, let's update our `/etc/hosts` file and add the following entries:
+ 127.0.0.1	puppet.local.nl.bol.com puppet puppetdb
+
+With all puppet components up and running we can also generate a certificate for our r2d2 container.
+This requires puppet to be installed on your machine (or use a container as long as you can keep the
+generated SSL certificates).
+
+Using a locally installed puppet, run the following command:
+[source,bash]
+----
+puppet agent -t --server puppet --certname r2d2dev --noop
+----
+
+Using a `r2d2dev` as a hostname, although this does not matter much. On a locally installed puppet
+the certificates may end up in directory `~/.puppetlabs/etc/puppet/ssl`. Make a note of where
+you can find these certificates as this path is important for r2d2's docker run.
+
+If you have a certificate, you can remove the entries from `/etc/hosts` again.
+
+==== Verify the setup
+
+The PuppetDB server should show a dashboard on URL `localhost:8080/pdb/dashboard/index.html`.
+
+Test the connection from the r2d2-app docker image.
+[source,bash]
+----
+docker run --rm -it --entrypoint bash --link puppetdb:puppetdb -v ${HOME}/.puppetlabs/etc/puppet/ssl:/tmp/r2d2-puppet-ssl registry.tools.bol.com/platform/r2d2-app:v1.0 <1>
+puppet-query -u https://puppetdb:8081 --cacert /tmp/r2d2-puppet-ssl/certs/ca.pem --cert=/tmp/r2d2-puppet-ssl/certs/r2d2dev.pem --key=/tmp/r2d2-puppet-ssl/private_keys/r2d2dev.pem 'resources[certname]{type = "Class" and title = "Gcp_project::Project"}' <2>
+----
+<1> Note the `${HOME}/.puppetlabs/etc/puppet/ssl` directory, make sure to put the proper value here
+    if the certificates are stored somewhere else.
+<2> This is a test PuppetDB query to see if the connection works. The result should be `[]` as there is
+    no data in PuppetDB yet.
+
+==== Stop PuppetDB setup
+
+Before we continue, let's stop the PuppetDB environment as we won't be needing Puppet server anymore.
+
+[source,bash]
+----
+docker stop puppetdb
+docker stop postgres
+docker stop puppet
+docker rm puppetdb
+docker rm postgres
+docker rm puppet
+----
+
+In the next section we will start up puppetdb again.
+
+=== Running R2D2 execute mode with puppetdb
+
+==== Start PuppetDB
+
+Start Postgres first, using same command as during bootstrapping and wait for it to finish starting.
+[source,bash]
+----
+docker run -d --name postgres -v ${HOME}/r2d2/puppetdb/postgres/:/var/lib/postgresql/data -e POSTGRES_PASSWORD=puppetdb -e POSTGRES_USER=puppetdb puppet/puppetdb-postgres
+----
+
+Next, start PuppetDB itself. *Do not* use the same command as during bootstrap, instead use the following command:
+[source,bash]
+----
+docker run -d -v ${HOME}/r2d2/puppetdb/ssl:/etc/puppetlabs/puppetdb/ssl -v ${HOME}/r2d2/puppetdb/ssl/jetty.ini:/etc/puppetlabs/puppetdb/conf.d/jetty.ini --link postgres:postgres -p 8080:8080 -p 8081:8081 --hostname puppetdb --name puppetdb puppet/puppetdb
+----
+
+The difference here are the volume mounts and the lack of the `puppet` link.
+
+Use `docker logs -f puppetdb` to follow the startup. It can take a while. Logs should show starting of two
+HTTP connectors (8080 and 8081) and no database migration actions.
+
+TIP: put these two commands in a script for easy startup later
+
+==== Update r2d2 run environment
+
+First, update your `run.sh` and make sure to include the following two Docker parameters:
+----
+--hostname r2d2dev -v ${HOME}/.puppetlabs/etc/puppet/ssl:/tmp/r2d2-puppet-ssl --link puppetdb:puppetdb
+----
+
+Adjust `r2d2dev` hostname if you choose another name during bootstrapping and adjust the path to the SSL
+certificates if needed.
+
+Next, update `r2d2-config.yaml` in the `base` repository. In the `puppetdb` section change the hostname
+to `puppetdb` (as added in the `/etc/hosts` file).
+
+PuppetDB is disabled by default, so to enable it make sure to pass the parameter `--enable-puppetdb`.
+You can do this by executing `run.sh` with `--enable-puppetdb` as extra parameter or add it as a default
+to your `docker run` command in the `run.sh` script. Your choice.
+
+==== Verify it works
+
+Execute a run for one of your test projects. If all steps are completed correctly, the run should not
+fail and on the link:http://localhost:8080/pdb/dashboard/index.html[PuppetDB dashboard] you should see
+1 active node in the stats.
+
+You can also run the test puppetdb-query:
+[source,bash]
+----
+docker run --rm -it --link puppetdb:puppetdb --entrypoint bash -v ${HOME}/.puppetlabs/etc/puppet/ssl:/tmp/r2d2-puppet-ssl registry.tools.bol.com/platform/r2d2-app:v1.0
+puppet-query -u https://puppetdb:8081 --cacert /tmp/r2d2-puppet-ssl/certs/ca.pem --cert=/tmp/r2d2-puppet-ssl/certs/r2d2dev.pem --key=/tmp/r2d2-puppet-ssl/private_keys/r2d2dev.pem 'resources[certname]{type = "Class" and title = "Gcp_project::Project"}'
+----
+
+Now it should show output like this:
+----
+[
+  {
+    "certname": "bolcom-zandbak-xyz"
+  }
+]
+----
+
