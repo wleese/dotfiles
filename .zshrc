@@ -54,10 +54,11 @@ DISABLE_AUTO_UPDATE="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 #plugins=(git last-working-dir compleat vagrant safe-paste)
+plugins=(last-working-dir compleat vagrant )
 
 # User configuration
 
-export PATH="/opt/puppetlabs/bin/puppet:/usr/local/go/bin:/home/wleese/perl5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PATH="/opt/puppetlabs/bin/puppet:/usr/local/go/bin:/home/wleese/perl5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:~/.local/bin:/home/wleese/.gem/ruby/2.3.0/bin:/home/wleese/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -66,16 +67,15 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 export GIT_EDITOR=nvim
-export VISUAL=nvim
 export EDITOR=nvim
 
+alias cast=cat
 alias gp='git pull --rebase; git submodule sync; git submodule update --init'
-alias glgg='git log -p -m'
+alias glgg='git log -p -m --decorate'
 alias glg='git log -p'
 alias gc='git checkout '
 alias gbm='git checkout master'
 alias gbd='git checkout develop'
-alias gnb='git branch'
 alias gm='git merge '
 alias ga='git add '
 alias gai='git add -i'
@@ -84,12 +84,47 @@ alias gb='git branch -va'
 alias gr="git remote -v "
 alias gd="git diff "
 alias gs='git status'
-alias v='nvim'
-alias vi='nvim'
-alias vim='nvim'
+#alias v='nvim'
+#alias vi='nvim'
+#alias vim='nvim'
 # alias v='vim --servername me'
 # alias vi='vim --servername me'
 # alias vim='vim --servername me'
+#
+if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+  export VISUAL="nvr -cc tabedit --remote-wait +'set bufhidden=wipe'"
+else
+  export VISUAL="nvim"
+fi
+alias v="$VISUAL"
+alias vi="$VISUAL"
+alias vim="$VISUAL"
+
+function gnb () {
+  git branch $1 && git checkout $1
+
+}
+#function v () {
+#  if [[ -z $NVIM_LOG_FILE ]]; then
+#    nvim $1
+#  else
+#    ~/bin/vv $1
+#  fi
+#}
+#function vi () {
+#  if [[ -z $NVIM_LOG_FILE ]]; then
+#    nvim $1
+#  else
+#    ~/bin/vv $1
+#  fi
+#}
+#function vim () {
+#  if [[ -z $NVIM_LOG_FILE ]]; then
+#    nvim $1
+#  else
+#    ~/bin/vv $1
+#  fi
+#}
 
 function cssh () {
   for i in "$@"; do
@@ -107,7 +142,11 @@ alias vstat='vagrant status '
 alias sshconfig="~/bin/sshconfig-create.sh > ~/.ssh/config"
 alias ..='cd ..'
 
-alias rg='grep -Rin --color=always'
+#alias rg='grep -Rin --color=always'
+alias rg='~/bin/rg --no-heading'
+function rgg () {
+  ~/bin/rg --no-heading -n $1 | nvim -
+}
 alias grep='grep --color=auto'
 alias ff="find | grep  "
 alias sl="ls"
@@ -126,7 +165,7 @@ function lsv() {
 }
 
 function vs (){
-  vagrant ssh $1 -- -At  "echo \"$(cat ~/nicealiases)\" > /tmp/nicealiases; echo \"$(cat ~/nicevimrc)\" > /tmp/nicevimrc; bash --rcfile /tmp/nicealiases "
+  vagrant ssh $1 -- -At  "echo \"$(cat ~wleese/nicealiases | sed s/wleese/vagrant/g)\" > ~vagrant/nicealiases; echo \"$(cat ~wleese/nicevimrc)\" > ~vagrant/nicevimrc; bash --rcfile ~vagrant/nicealiases "
 }
 
 # show completion menu when number of options is at least 2
@@ -173,12 +212,13 @@ alias dl='docker logs'
 alias de='docker exec -ti'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
-alias dcrm='docker kill $(docker ps -a -q); docker rm $(docker ps -a -q); docker rmi $(docker images -q)'
+alias dcrm='docker kill $(docker ps -a -q); docker rm $(docker ps -a -q); docker rmi -f $(docker images -q)'
 alias vsu='vagrant suspend'
 alias vr='vagrant resume'
 alias magit="vim -c MagitOnly"
 alias less="less -R"
 alias kc="kubectl"
+alias kl="stern"
 function dbr {
   OUT="$(docker build . | tail -n1)"
   ID=$(echo "${OUT}" | awk '/Successfully/ {print $3}')
@@ -222,3 +262,5 @@ function vsa {
     vagrant suspend $i
   done
 }
+
+source <(kubectl completion zsh)

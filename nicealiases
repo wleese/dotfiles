@@ -4,10 +4,10 @@ alias ..='cd ..';
 alias psg='ps aux | grep -i --color';
 alias log='lsof | grep  -E \"\.log|out$\"';
 alias ll='ls -lha';
-alias sd='sudo su -c \"bash  --rcfile /tmp/nicealiases\" -l || sudo -i';
-alias v='vim -u /tmp/nicevimrc';
-alias vi='vim -u /tmp/nicevimrc';
-alias vim='vim -u /tmp/nicevimrc';
+alias sd='sudo su -c \"bash  --rcfile ~wleese/nicealiases\" -l || sudo -i';
+alias v='vim -u ~wleese/nicevimrc';
+alias vi='vim -u ~wleese/nicevimrc';
+alias vim='vim -u ~wleese/nicevimrc';
 alias tf='tail -f ';
 alias nstat='netstat --inet --inet6 -pln | grep --color ';
 alias netstat='netstat --inet --inet6 -pln';
@@ -21,12 +21,8 @@ alias c='cat';
 alias ff='find | grep --color=auto ';
 alias rqa='rpm -qa | grep --color';
 alias rg='grep -Ri --color';
-alias tcr='service tc_instance restart';
-alias tct='service tc_instance threaddump';
-alias lses='for pid in \$(pgrep -f es.path.home -u elasticsearch,elastic,root); do instance=\$(ps -p \$pid -o command=| grep -o -e "Des.path.conf=/etc/elasticsearch/[a-z]*[0-9]*" | cut -d/ -f 4); interface=\$(netstat -npt|grep \$pid|grep -o \"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:[0-9]*\" | grep 9200); logs=\$(lsof -p \$pid | grep -E \"\.log\$\"); echo; export \$instance=\$interface; echo \"\$instance (\$pid)\"; echo \"curl -s -XGET \$interface\"; echo \$logs; done';
 . /etc/bashrc;
 export PS1='\u@\h \w# ';
-function psr { /etc/init.d/atg_instance ps\$1 threaddump; /etc/init.d/atg_instance ps\$1 restart; };
 alias d='docker'
 alias de='docker exec -ti'
 function deb { docker exec -ti \$1 /bin/bash; };
@@ -35,4 +31,6 @@ alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias dl='docker logs'
 alias dlf='docker logs -f'
+alias dpsg='docker ps -q | xargs docker inspect --format "{{.State.Pid}}, {{.Name}}" | grep '
 alias jqq='python -m json.tool'
+alias cast=cat

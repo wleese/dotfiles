@@ -54,6 +54,9 @@ if dein#load_state('/home/wleese/.config/nvim/dein')
   call dein#add('zchee/deoplete-jedi')             " Python code completion. requires python-jedi
   call dein#add('davidhalter/jedi-vim')            " Python IDE stuff like goto def. disable autocompl due to conflict with deoplete-jedi
   call dein#add('kassio/neoterm')
+  " call dein#add('tpope/vim-obsession')             " store session on exit
+  " call dein#add('dhruvasagar/vim-prosession')      " remember session per dir
+
 
   " Required:
   call dein#end()
@@ -121,6 +124,7 @@ nnoremap <Leader>m :Denite -mode=normal -updatetime=400 file_mru<CR>
 nnoremap <Leader>r :Denite -mode=normal register<CR>
 "nnoremap <Leader>f :Denite -mode=insert -updatetime=400 file_rec <CR>
 nnoremap <Leader>f :DeniteProjectDir -mode=insert -updatetime=600 file_rec<CR>
+nnoremap <Leader>b :Denite -mode=normal buffer<CR>
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_delay = 500
@@ -354,3 +358,6 @@ set scrolloff=5
 " conflicts with deoplete-jedi
 let g:jedi#completions_enabled = 0
 let g:jedi#goto_command = "gD"
+
+"Remove all trailing whitespace by pressing F5\
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>

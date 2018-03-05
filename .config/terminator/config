@@ -1,65 +1,67 @@
 [global_config]
-  geometry_hinting = False
-  window_state = maximise
-  suppress_multiple_term_dialog = True
+  always_split_with_profile = True
+  broadcast_default = off
+  custom_url_handler = /usr/bin/firefox
+  enabled_plugins = ,
   focus = mouse
+  geometry_hinting = True
+  handle_size = 1
+  homogeneous_tabbar = False
+  scroll_tabbar = True
+  suppress_multiple_term_dialog = True
   tab_position = hidden
+  title_hide_sizetext = True
+  use_custom_url_handler = True
+  window_state = maximise
 [keybindings]
-  toggle_zoom = <Primary>F11
-  go_up = <Alt>k
+  broadcast_all = <Primary><Shift><Alt>a
+  broadcast_group = <Primary><Shift><Alt>g
+  broadcast_off = <Primary><Shift><Alt>o
+  full_screen = None
+  new_window = None
   split_horiz = <Super>h
-  full_screen = <Alt><Super>f
-  go_down = <Alt>j
   split_vert = <Super>v
-  go_right = <Alt>l
-  go_left = <Alt>h
-[profiles]
-  [[default]]
-    background_image = None
-    copy_on_selection = True
-    scrollback_infinite = True
-    show_titlebar = False
+  toggle_zoom = <Primary>F11
 [layouts]
   [[default]]
     [[[child0]]]
-      position = 0:0
-      type = Window
+      fullscreen = False
+      last_active_term = 093336bd-9c00-411a-9820-df29281c0868
+      last_active_window = True
+      maximised = True
       order = 0
       parent = ""
-      size = 1920, 1138
+      position = 0:0
+      size = 1920, 1015
+      title = wleese@wleese-HP-EliteBook-840-G1: ~
+      type = Window
     [[[child1]]]
-      position = 569
-      type = VPaned
       order = 0
       parent = child0
-    [[[child2]]]
-      position = 960
+      position = 957
+      ratio = 0.499739583333
       type = HPaned
+    [[[terminal2]]]
       order = 0
       parent = child1
-    [[[child5]]]
-      position = 960
-      type = HPaned
-      order = 1
-      parent = child1
+      profile = default
+      type = Terminal
+      uuid = 093336bd-9c00-411a-9820-df29281c0868
     [[[terminal3]]]
-      profile = default
-      type = Terminal
-      order = 0
-      parent = child2
-    [[[terminal4]]]
-      profile = default
-      type = Terminal
       order = 1
-      parent = child2
-    [[[terminal7]]]
+      parent = child1
       profile = default
       type = Terminal
-      order = 1
-      parent = child5
-    [[[terminal6]]]
-      profile = default
-      type = Terminal
-      order = 0
-      parent = child5
+      uuid = ac1b4197-d649-4cbb-87ee-825427772f32
 [plugins]
+[profiles]
+  [[default]]
+    allow_bold = False
+    copy_on_selection = True
+    cursor_color = "#aaaaaa"
+    font = Hack Bold 10
+    icon_bell = False
+    scrollback_infinite = True
+    show_titlebar = False
+    use_system_font = False
+    visible_bell = True
